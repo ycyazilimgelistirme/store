@@ -106,7 +106,7 @@
         <div class="relative w-4/5 max-w-sm h-full bg-white shadow-xl flex flex-col">
             <!-- Menü Başlığı -->
             <div class="flex justify-between items-center p-4 border-b">
-                <a href="#" class="text-2xl font-bold text-blue-600 tracking-tight">PC<span class="text-gray-800">DÜNYASI</span></a>
+                <a href="#/" class="text-2xl font-bold text-blue-600 tracking-tight">PC<span class="text-gray-800">DÜNYASI</span></a>
                 <button id="mobile-nav-close" class="text-gray-500 hover:text-gray-800">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -146,7 +146,7 @@
             </button>
             
             <!-- Logo -->
-            <a href="#" class="text-2xl md:text-3xl font-bold text-blue-600 tracking-tight flex-shrink-0 mx-auto lg:mx-0">PC<span class="text-gray-800">DÜNYASI</span></a>
+            <a href="#/" class="text-2xl md:text-3xl font-bold text-blue-600 tracking-tight lg:mx-0">PC<span class="text-gray-800">DÜNYASI</span></a>
             
             <!-- Masaüstü Arama Çubuğu -->
             <div class="flex-1 max-w-xl mx-8 hidden lg:block">
@@ -160,9 +160,9 @@
                 </div>
             </div>
             
-            <!-- Sepet (Masaüstü) -->
+            <!-- Sepet -->
             <a href="#cart" id="cart-icon-link" class="relative flex-shrink-0 flex items-center text-gray-700 hover:text-blue-600 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c.121 0 .239.04.335.117l2.828 2.09a.75.75 0 0 1-.028 1.258H7.5M7.5 14.25N6.623 10.5h11.25L16.5 14.25M7.5 14.25" />
                 </svg>
                 <span class="ml-2 font-medium hidden lg:block">Sepetim</span>
@@ -170,8 +170,6 @@
             </a>
         </div>
         
-        <!-- Masaüstü Kategori Navigasyonu (Artık Gizli, Sidebar'da) -->
-        <!-- <nav class="bg-white border-t border-gray-200 hidden lg:block"> ... </nav> -->
     </header>
 
     <!-- ANA İÇERİK ALANI -->
@@ -214,8 +212,8 @@
                 <!-- Ürün Alanı -->
                 <div class="lg:col-span-9">
                     <h2 id="page-title" class="text-2xl font-bold text-gray-800 mb-6">Tüm Ürünler</h2>
-                    <!-- Ürün Grid -->
-                    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Ürün Grid - DÜZELTME: Mobil için grid-cols-1, sm:grid-cols-2, md:grid-cols-3, xl:grid-cols-4 -->
+                    <div id="product-grid" class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 sm:gap-6">
                         <!-- Ürün kartları buraya JS ile eklenecek -->
                     </div>
                     
@@ -230,7 +228,7 @@
         <!-- ÜRÜN DETAY SAYFASI -->
         <div id="detail-page" class="page">
             <div class="mb-6">
-                <a href="#" class="inline-flex items-center text-blue-600 hover:underline font-medium">
+                <a href="#/" class="inline-flex items-center text-blue-600 hover:underline font-medium">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 mr-1">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                     </svg>
@@ -245,7 +243,8 @@
         <!-- SEPET SAYFASI -->
         <div id="cart-page" class="page">
             <h2 class="text-3xl font-bold text-gray-800 mb-8">Sepetim</h2>
-            <div id="cart-content" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- DÜZELTME: flex-col-reverse kaldırıldı. Normal sıralama (Sepet Üstte, Özet Altta) -->
+            <div id="cart-content" class="flex flex-col lg:grid lg:grid-cols-3 gap-8">
                 <!-- Sepet içeriği buraya JS ile eklenecek -->
             </div>
         </div>
@@ -267,7 +266,7 @@
                 <div>
                     <h4 class="text-lg font-semibold text-white mb-4">Hızlı Linkler</h4>
                     <ul class="space-y-2">
-                        <li><a href="#" class="hover:text-white hover:underline">Ana Sayfa</a></li>
+                        <li><a href="#/" class="hover:text-white hover:underline">Ana Sayfa</a></li>
                         <li><a href="#cart" class="hover:text-white hover:underline">Sepetim</a></li>
                         <li><a href="#" class="hover:text-white hover:underline">Hesabım</a></li>
                     </ul>
@@ -277,10 +276,11 @@
                 <div>
                     <h4 class="text-lg font-semibold text-white mb-4">Kategoriler</h4>
                     <ul class="space-y-2">
-                        <li><a href="#" class="category-link hover:text-white hover:underline" data-category="Ekran Kartı">Ekran Kartları</a></li>
-                        <li><a href="#" class="category-link hover:text-white hover:underline" data-category="İşlemci">İşlemciler</a></li>
-                        <li><a href="#" class="category-link hover:text-white hover:underline" data-category="Anakart">Anakartlar</a></li>
-                        <li><a href="#" class="category-link hover:text-white hover:underline" data-category="Monitör">Monitörler</a></li>
+                        <!-- DÜZELTME: Kategori linkleri hash ile güncellendi -->
+                        <li><a href="#category/Ekran%20Kartı" class="category-link hover:text-white hover:underline" data-category="Ekran Kartı">Ekran Kartları</a></li>
+                        <li><a href="#category/%C4%B0%C5%9Flemci" class="category-link hover:text-white hover:underline" data-category="İşlemci">İşlemciler</a></li>
+                        <li><a href="#category/Anakart" class="category-link hover:text-white hover:underline" data-category="Anakart">Anakartlar</a></li>
+                        <li><a href="#category/Monit%C3%B6r" class="category-link hover:text-white hover:underline" data-category="Monitör">Monitörler</a></li>
                     </ul>
                 </div>
 
@@ -387,14 +387,22 @@
             
             // 4. Ürün verilerini çek
             try {
-                const response = await fetch('fiyatlar.json');
+                // 'fiyatlar.json' dosyasının doğru yolda olduğundan emin olun
+                const response = await fetch('fiyatlar.json'); 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 allProducts = await response.json();
                 
-                // Ürünlere benzersiz ID ekle (urun_linki'ni kullanabiliriz)
-                allProducts = allProducts.map(p => ({ ...p, id: p.urun_linki }));
+                // Ürünlere benzersiz ID ekle (urun_linki'yi ID olarak kullanacağız)
+                allProducts = allProducts.map(p => ({ 
+                    ...p, 
+                    id: p.urun_linki, // urun_linki, ID olarak kullanılacak
+                    
+                    // Kategori filtresi için bir anahtar kelime listesi oluştur
+                    // Örneğin: "Ryzen 5 7600X (İşlemci)" -> Kategori: "İşlemci"
+                    categoryKeyword: (p.aciklama.match(/\(([^)]+)\)$/) ? p.aciklama.match(/\(([^)]+)\)$/)[1] : '').trim() 
+                }));
                 
                 filteredProducts = [...allProducts]; // Başlangıçta tüm ürünler gösterilir
                 
@@ -406,7 +414,7 @@
                 
             } catch (error) {
                 console.error("Ürünler yüklenirken hata oluştu:", error);
-                appContainer.innerHTML = `<p class="text-center text-red-500 text-lg">Ürünler yüklenemedi. Lütfen 'fiyatlar.json' dosyasının doğru yerde olduğundan emin olun.</p>`;
+                appContainer.innerHTML = `<p class="col-span-full text-center text-red-500 text-lg">Ürünler yüklenemedi. Lütfen 'fiyatlar.json' dosyasının doğru yerde olduğundan emin olun. Hata: ${error.message}</p>`;
             } finally {
                 loadingIndicator.classList.remove('active');
             }
@@ -423,20 +431,40 @@
             searchInput.addEventListener('input', (e) => handleSearch(e.target.value));
             mobileSearchInput.addEventListener('input', (e) => handleSearch(e.target.value));
             
-            // Kategori linkleri (Tüm .category-link'leri kapsar)
-            document.body.addEventListener('click', (e) => {
-                if (e.target.closest('.category-link')) {
-                    e.preventDefault();
-                    const category = e.target.closest('.category-link').dataset.category;
-                    handleCategoryFilter(category);
-                }
-            });
-            
             // Mobil menü açma/kapatma
             mobileMenuBtn.addEventListener('click', () => toggleMobileNav(true));
             mobileNavClose.addEventListener('click', () => toggleMobileNav(false));
             mobileNavOverlay.addEventListener('click', () => toggleMobileNav(false));
+            
+            // Mobil menüdeki linklere tıklandığında menüyü kapat
             mobileCartLink.addEventListener('click', () => toggleMobileNav(false));
+            mobileCategoryList.addEventListener('click', (e) => {
+                if (e.target.closest('.category-link')) {
+                    toggleMobileNav(false);
+                }
+            });
+            
+            // *** DÜZELTME: Kategori linklerine tıklama olay dinleyicileri eklendi ***
+            // Masaüstü Sidebar Kategorileri
+            sidebarCategoryList.addEventListener('click', (e) => {
+                const link = e.target.closest('.category-link');
+                if (link) {
+                    e.preventDefault(); // Varsayılan hash navigasyonunu engelle
+                    const category = link.dataset.category;
+                    window.location.hash = category === 'Tümü' ? '/' : `#category/${encodeURIComponent(category)}`;
+                    
+                    // handleRouting hashchange event'i tarafından tetiklenecek
+                }
+            });
+            
+            // Mobil Sidebar Kategorileri (zaten bir event listener'ı var, ama biz handleRouting'i tetikleyelim)
+             mobileCategoryList.addEventListener('click', (e) => {
+                const link = e.target.closest('.category-link');
+                if (link) {
+                    const category = link.dataset.category;
+                    window.location.hash = category === 'Tümü' ? '/' : `#category/${encodeURIComponent(category)}`;
+                }
+            });
         }
         
         /**
@@ -459,8 +487,12 @@
             mobileCategoryList.innerHTML = '';
             
             categories.forEach(category => {
+                // URL'de güvenli kullanım için encode et
+                const categoryHash = encodeURIComponent(category);
                 const li = document.createElement('li');
-                li.innerHTML = `<a href="#" class="category-link block px-3 py-2 rounded-md transition-colors duration-150 hover:bg-blue-50" data-category="${category}">${category}</a>`;
+                // href'i sadece kategoriyi içerecek şekilde ayarla
+                const href = category === 'Tümü' ? '#/' : `#category/${categoryHash}`;
+                li.innerHTML = `<a href="${href}" class="category-link block px-3 py-2 rounded-md transition-colors duration-150 hover:bg-blue-50" data-category="${category}">${category}</a>`;
                 
                 sidebarCategoryList.appendChild(li.cloneNode(true));
                 mobileCategoryList.appendChild(li);
@@ -490,14 +522,25 @@
             
             if (hash.startsWith('#product/')) {
                 // Ürün ID'sini (urun_linki) hash'ten al
-                const productId = decodeURIComponent(hash.substring(9));
+                const productId = decodeURIComponent(hash.substring(9)); 
                 renderDetailPage(productId);
             } else if (hash === '#cart') {
                 renderCartPage();
+            } else if (hash.startsWith('#category/')) {
+                const category = decodeURIComponent(hash.substring(10));
+                handleCategoryFilter(category); // Önce filtrele
+                renderHomePage(); // Sonra ana sayfayı render et
             } else {
-                // Ana sayfa (veya bilinmeyen hash)
-                window.location.hash = ''; // URL'yi temizle
+                // Ana sayfa (#, #/, veya boş hash)
+                // Kategori zaten "Tümü" ise tekrar filtreleme yapmaya gerek yok
+                if (currentCategory !== 'Tümü') {
+                    handleCategoryFilter('Tümü');
+                }
                 renderHomePage();
+                // URL'yi temizle (eğer #/ gibiyse)
+                if (hash !== '') {
+                    window.location.hash = '';
+                }
             }
         }
         
@@ -521,13 +564,16 @@
         function renderHomePage() {
             productGrid.innerHTML = ''; // Grid'i temizle
             
+            // Başlığı aktif kategoriye göre ayarla
+            pageTitle.innerText = currentCategory === 'Tümü' ? 'Tüm Ürünler' : currentCategory;
+            
             // Sayfalamaya göre ürünleri hesapla
             const startIndex = (currentPage - 1) * productsPerPage;
             const endIndex = startIndex + productsPerPage;
             const productsToShow = filteredProducts.slice(startIndex, endIndex);
 
             if (productsToShow.length === 0) {
-                productGrid.innerHTML = `<p class="col-span-full text-center text-gray-500 text-lg">Aramanızla eşleşen ürün bulunamadı.</p>`;
+                productGrid.innerHTML = `<p class="col-span-full text-center text-gray-500 text-lg">Seçilen kategori veya aramanızla eşleşen ürün bulunamadı.</p>`;
             } else {
                 // Her ürün için kart oluştur
                 productsToShow.forEach(product => {
@@ -545,7 +591,8 @@
          * @param {string} productId Gösterilecek ürünün ID'si (urun_linki)
          */
         function renderDetailPage(productId) {
-            const product = allProducts.find(p => p.id === productId);
+            // DÜZELTME: Ürünü ID'ye göre bul (ID urun_linki'ne eşit)
+            const product = allProducts.find(p => p.id === productId); 
             
             if (!product) {
                 productDetailContent.innerHTML = `<p class="text-red-500">Ürün bulunamadı.</p>`;
@@ -553,18 +600,18 @@
                 return;
             }
             
-            // İsteğe göre büyük resmi (resim_linki) kullan
             productDetailContent.innerHTML = `
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                     <!-- Ürün Resmi -->
-                    <div class="bg-white rounded-lg p-4 border border-gray-200 sticky top-28">
+                    <div class="bg-white rounded-lg p-4 border border-gray-200 lg:sticky lg:top-28">
                         <img src="${product.resim_linki}" alt="${product.aciklama}" class="w-full h-auto max-h-[500px] object-contain rounded-md" 
                              onerror="this.onerror=null; this.src='https://placehold.co/600x600/f1f5f9/94a3b8?text=Resim+Yok';">
                     </div>
                     
                     <!-- Ürün Bilgileri -->
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900 mb-4">${product.aciklama}</h1>
+                        <!-- DÜZELTME: Mobil için yazı boyutu küçültüldü -->
+                        <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">${product.aciklama}</h1>
                         
                         <div class="mb-6">
                             ${product.kargo ? 
@@ -573,7 +620,8 @@
                             }
                         </div>
                         
-                        <p class="text-4xl font-extrabold text-blue-600 mb-8">${formatPrice(product.fiyat)} TL</p>
+                        <!-- DÜZELTME: Mobil için yazı boyutu küçültüldü -->
+                        <p class="text-3xl md:text-4xl font-extrabold text-blue-600 mb-8">${formatPrice(product.fiyat)} TL</p>
                         
                         <button class="add-to-cart-btn w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg text-lg transition-colors duration-200 flex items-center justify-center space-x-2" data-id="${product.id}">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
@@ -584,7 +632,7 @@
                         
                         <div class="mt-8 border-t pt-6 text-gray-700 space-y-4">
                             <h4 class="text-lg font-semibold">Açıklama</h4>
-                            <p class="text-gray-600 leading-relaxed">${product.aciklama} - Bu alana ürüne ait daha detaylı açıklamalar, teknik özellikler ve benzeri bilgiler eklenebilir. Şimdilik ana açıklamayı tekrar gösteriyoruz.</p>
+                            <p class="text-gray-600 leading-relaxed">${product.aciklama} - Bu alana ürüne ait daha detaylı açıklamalar, teknik özellikler ve benzeri bilgiler eklenebilir. Şimdilik ana açıklamayı tekrar gösteriyoruz. Ürünün orijinal linki: <a href="${product.urun_linki}" target="_blank" class="text-blue-500 hover:underline">Kaynağa Git</a></p>
                         </div>
                     </div>
                 </div>
@@ -610,7 +658,7 @@
                         </svg>
                         <h3 class="text-2xl font-semibold text-gray-800 mb-2">Sepetiniz şu anda boş</h3>
                         <p class="text-gray-500 mb-6">Hemen alışverişe başlayın ve harika ürünleri keşfedin.</p>
-                        <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">Alışverişe Başla</a>
+                        <a href="#/" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">Alışverişe Başla</a>
                     </div>
                 `;
             } else {
@@ -648,7 +696,7 @@
                 
                 // Sepet Özeti
                 const summaryHtml = `
-                    <div class="bg-white p-6 rounded-lg shadow sticky top-28">
+                    <div class="bg-white p-6 rounded-lg shadow lg:sticky lg:top-28">
                         <h3 class="text-xl font-bold border-b pb-3 mb-4">Sipariş Özeti</h3>
                         <div class="space-y-3">
                             <div class="flex justify-between">
@@ -678,10 +726,12 @@
                 `;
 
                 cartContent.innerHTML = `
-                    <div class="lg:col-span-2 space-y-4">
+                    <!-- Sepet Ürünleri (Üstte) -->
+                    <div class="lg:col-span-2 space-y-4 w-full order-1">
                         ${itemsHtml}
                     </div>
-                    <div class="lg:col-span-1">
+                    <!-- Sipariş Özeti (Altta, Mobil) -->
+                    <div class="lg:col-span-1 w-full order-2">
                         ${summaryHtml}
                     </div>
                 `;
@@ -716,7 +766,7 @@
             const card = document.createElement('div');
             card.className = 'bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col';
             
-            // İsteğe göre küçük resmi (kucuk_resim_linki) kullan
+            // Linkte encode edilmiş ID kullanıldı
             card.innerHTML = `
                 <a href="#product/${encodeURIComponent(product.id)}" class="block group">
                     <div class="overflow-hidden">
@@ -758,56 +808,37 @@
             if (totalPages <= 1) return; // Tek sayfa varsa sayfalama gösterme
 
             // --- Yeni Sayfalama Mantığı ---
-            const maxButtons = 7; // Gösterilecek maks sayfa/ellipsis butonu (Örn: 1 ... 10 11 12 ... 50)
+            const maxButtons = 7; // Gösterilecek maks sayfa/ellipsis butonu
             let pagesToShow = [];
 
+            // Basitleştirilmiş sayfalama (Tüm ürünler 1 sayfada listeleniyorsa bu kısım çalışmaz)
             if (totalPages <= maxButtons) {
-                // Toplam sayfa sayısı max'tan azsa, tümünü göster
                 for (let i = 1; i <= totalPages; i++) {
                     pagesToShow.push(i);
                 }
             } else {
-                // Çok sayfa varsa, Google stili mantığı
-                let startPages = [1, 2];
-                let endPages = [totalPages - 1, totalPages];
-                let middlePages = [currentPage - 1, currentPage, currentPage + 1];
+                let startPages = [1];
+                let endPages = [totalPages];
+                let middlePages = [];
+                
+                // Aktif sayfanın etrafındaki 1 sayfayı (aktif sayfa dahil) hesapla
+                for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+                    middlePages.push(i);
+                }
 
-                // Sayıları birleştir ve unique yap
                 let allPages = [...startPages, ...middlePages, ...endPages]
-                    .filter(page => page >= 1 && page <= totalPages) // Geçerli sayfalar
-                    .filter((value, index, self) => self.indexOf(value) === index) // Benzersiz yap
-                    .sort((a, b) => a - b); // Sırala
+                    .filter(page => page >= 1 && page <= totalPages) 
+                    .filter((value, index, self) => self.indexOf(value) === index) 
+                    .sort((a, b) => a - b); 
 
                 // '...' (ellipsis) ekle
                 let prevPage = 0;
                 for (const page of allPages) {
                     if (prevPage + 1 < page) {
-                        pagesToShow.push('...'); // Arada boşluk varsa ellipsis ekle
+                        pagesToShow.push('...'); 
                     }
                     pagesToShow.push(page);
                     prevPage = page;
-                }
-                
-                // Gerekirse butonları kırp (maxButtons'a sığdır)
-                // Bu mantık genelde [1] [...] [c-1] [c] [c+1] [...] [total] yapısını korur
-                if (pagesToShow.length > maxButtons) {
-                    if(currentPage < totalPages / 2) {
-                        // Başa yakınsak: [1] [2] [3] [4] [...] [total]
-                        pagesToShow = [1, 2, 3, 4, 5, '...', totalPages];
-                        if (currentPage > 4) {
-                             pagesToShow = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
-                        }
-                    } else {
-                        // Sona yakınsak: [1] [...] [47] [48] [49] [50]
-                        pagesToShow = [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
-                         if (currentPage < totalPages - 3) {
-                             pagesToShow = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
-                        }
-                    }
-                }
-                // Aktif sayfanın her zaman görünür olmasını sağla (eğer kesildiyse)
-                if (!pagesToShow.includes(currentPage)) {
-                     pagesToShow = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
                 }
             }
             // --- Bitiş: Yeni Sayfalama Mantığı ---
@@ -902,7 +933,13 @@
             currentCategory = 'Tümü';
             updateActiveCategoryStyles();
             
-            renderHomePage();
+            // Arama yapınca URL hash'ini temizle
+            if(window.location.hash) {
+                window.location.hash = '';
+            } else {
+                // Zaten ana sayfadaysa, sadece render et
+                renderHomePage();
+            }
         }
 
         /**
@@ -914,14 +951,18 @@
             
             if (category === 'Tümü') {
                 filteredProducts = [...allProducts];
-                pageTitle.innerText = 'Tüm Ürünler';
             } else {
                 const categoryTerm = category.toLowerCase();
-                filteredProducts = allProducts.filter(product => 
-                    // Kategori adını içeren basit bir filtreleme
-                    product.aciklama.toLowerCase().includes(categoryTerm)
-                );
-                pageTitle.innerText = category;
+                
+                // KATEGORİ FİLTRESİ: Ürün açıklamasının sonundaki parantez içindeki kategoriye bakar.
+                filteredProducts = allProducts.filter(product => {
+                    // 1. Ürünün categoryKeyword alanı varsa ve eşleşiyorsa
+                    if (product.categoryKeyword && product.categoryKeyword.toLowerCase() === categoryTerm) {
+                        return true;
+                    }
+                    // 2. Eğer categoryKeyword yoksa (veya eşleşmiyorsa), yedek olarak açıklama içinde arama yapar
+                    return product.aciklama.toLowerCase().includes(categoryTerm);
+                });
             }
             
             currentPage = 1;
@@ -933,14 +974,6 @@
             
             // Mobil menüyü kapat
             toggleMobileNav(false);
-            
-            // Ana sayfaya yönlendir (eğer değilse)
-            if(window.location.hash) {
-                window.location.hash = '';
-            } else {
-                // Zaten ana sayfadaysa, sadece render et
-                renderHomePage();
-            }
         }
 
         // --- SEPET İŞLEVLERİ ---
@@ -1038,7 +1071,12 @@
          * @returns {string} Formatlanmış fiyat
          */
         function formatPrice(price) {
-            return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(price);
+            // Fiyatın bir sayı olduğundan emin ol, değilse 0 döndür
+            const numericPrice = parseFloat(price);
+            if (isNaN(numericPrice)) {
+                return '0,00';
+            }
+            return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(numericPrice);
         }
         
         /**
@@ -1060,4 +1098,3 @@
 
 </body>
 </html>
-
