@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Donanım Dünyası - E-Ticaret Sitesi</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* Tailwind'in düzgün çalışması için temel stiller */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa; /* Açık tema arka planı */
+            color: #212529;
+            overscroll-behavior-x: none;
+        }
+
+        /* Sayfalar arası geçiş için yardımcı class */
+        .page {
+            display: none; /* Sayfaları varsayılan olarak gizle */
+        }
+        .page.active {
+            display: block; /* Aktif sayfayı göster */
+        }
+
+        /* Ürün açıklamasının taşmasını engellemek için */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+        }
+
+        /* Sepet ikonu üzerindeki bildirim balonu */
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #ef4444; /* Kırmızı */
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        /* Geçiş efekti */
+        .page {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Aktif kategori linki stili */
+        .category-link.active {
+            color: #2563eb; /* text-blue-600 */
+            font-weight: 600;
+            background-color: #eff6ff; /* bg-blue-50 */
+        }
+        
+        /* Sayfalama ellipsis (...) stili */
+        .pagination-ellipsis {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            color: #6b7280; /* text-gray-500 */
+            font-weight: 500;
+        }
+        
+        /* Mobil menü geçişi */
+        #mobile-nav {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        /* Kategori menüsünün scrollbar'ını gizle (Webkit) */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- MOBİL MENÜ (Kayar Panel) -->
+    <div id="mobile-nav" class="fixed inset-0 bg-black bg-opacity-50 z-[60] transform -translate-x-full lg:hidden">
+        <!-- Menü İçeriği -->
+        <div class="relative w-4/5 max-w-sm h-full bg-white shadow-xl flex flex-col">
+            <!-- Menü Başlığı -->
+            <div class="flex justify-between items-center p-4 border-b">
+                <a href="#" class="text-2xl font-bold text-blue-600 tracking-tight">PC<span class="text-gray-800">DÜNYASI</span></a>
+                <button id="mobile-nav-close" class="text-gray-500 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Mobil Sepet Linki -->
+            <a href="#cart" id="mobile-cart-link" class="relative flex items-center justify-between p-4 text-gray-700 hover:bg-gray-100 border-b">
+                <span class="font-medium">Sepetim</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c.121 0 .239.04.335.117l2.828 2.09a.75.75 0 0 1-.028 1.258H7.5M7.5 14.25N6.623 10.5h11.25L16.5 14.25M7.5 14.25" />
+                </svg>
+            </a>
+
+            <!-- Mobil Kategori Listesi -->
+            <div class="p-4">
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Kategoriler</h3>
+                <ul id="mobile-category-list" class="flex flex-col space-y-1">
+                    <!-- Kategoriler JS ile buraya eklenecek -->
+                </ul>
+            </div>
+        </div>
+        <!-- Kapatmak için dışarı tıkla alanı -->
+        <div id="mobile-nav-overlay" class="absolute inset-0 w-full h-full"></div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            
+            <!-- Mobil Menü Butonu (Sol) -->
+            <button id="mobile-menu-btn" class="text-gray-700 hover:text-blue-600 lg:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+            </button>
+            
+            <!-- Logo -->
+            <a href="#" class="text-2xl md:text-3xl font-bold text-blue-600 tracking-tight flex-shrink-0 mx-auto lg:mx-0">PC<span class="text-gray-800">DÜNYASI</span></a>
+            
+            <!-- Masaüstü Arama Çubuğu -->
+            <div class="flex-1 max-w-xl mx-8 hidden lg:block">
+                <div class="relative">
+                    <input type="text" id="search-input" placeholder="Ürün, marka veya model ara..." class="w-full px-5 py-3 rounded-full border-2 border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors">
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sepet (Masaüstü) -->
+            <a href="#cart" id="cart-icon-link" class="relative flex-shrink-0 flex items-center text-gray-700 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c.121 0 .239.04.335.117l2.828 2.09a.75.75 0 0 1-.028 1.258H7.5M7.5 14.25N6.623 10.5h11.25L16.5 14.25M7.5 14.25" />
+                </svg>
+                <span class="ml-2 font-medium hidden lg:block">Sepetim</span>
+                <span id="cart-badge" class="cart-badge" style="display: none;">0</span>
+            </a>
+        </div>
+        
+        <!-- Masaüstü Kategori Navigasyonu (Artık Gizli, Sidebar'da) -->
+        <!-- <nav class="bg-white border-t border-gray-200 hidden lg:block"> ... </nav> -->
+    </header>
+
+    <!-- ANA İÇERİK ALANI -->
+    <main id="app-container" class="container mx-auto p-4 my-8">
+
+        <!-- YÜKLENİYOR... GÖSTERGESİ -->
+        <div id="loading-indicator" class="page active text-center py-20">
+            <svg class="animate-spin h-12 w-12 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="mt-4 text-lg font-medium text-gray-700">Ürünler yükleniyor...</p>
+        </div>
+
+        <!-- ANA SAYFA / ÜRÜN LİSTESİ -->
+        <div id="home-page" class="page">
+            
+            <!-- Mobil Arama Çubuğu -->
+            <div class="relative mb-6 lg:hidden">
+                <input type="text" id="mobile-search-input" placeholder="Ürün, marka veya model ara..." class="w-full px-5 py-3 rounded-full border-2 border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors">
+                <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Kategori Sidebar (Masaüstü) -->
+                <aside class="hidden lg:block lg:col-span-3">
+                    <div class="bg-white p-6 rounded-lg shadow-md sticky top-28">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-3">Kategoriler</h3>
+                        <ul id="sidebar-category-list" class="flex flex-col space-y-1">
+                            <!-- Kategoriler JS ile buraya eklenecek -->
+                        </ul>
+                    </div>
+                </aside>
+
+                <!-- Ürün Alanı -->
+                <div class="lg:col-span-9">
+                    <h2 id="page-title" class="text-2xl font-bold text-gray-800 mb-6">Tüm Ürünler</h2>
+                    <!-- Ürün Grid -->
+                    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <!-- Ürün kartları buraya JS ile eklenecek -->
+                    </div>
+                    
+                    <!-- Sayfalama -->
+                    <div id="pagination-controls" class="flex flex-wrap justify-center items-center space-x-1 sm:space-x-2 mt-12">
+                        <!-- Sayfa numaraları buraya JS ile eklenecek -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ÜRÜN DETAY SAYFASI -->
+        <div id="detail-page" class="page">
+            <div class="mb-6">
+                <a href="#" class="inline-flex items-center text-blue-600 hover:underline font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 mr-1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                    </svg>
+                    Geri Dön
+                </a>
+            </div>
+            <div id="product-detail-content" class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                <!-- Detay içeriği buraya JS ile eklenecek -->
+            </div>
+        </div>
+
+        <!-- SEPET SAYFASI -->
+        <div id="cart-page" class="page">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8">Sepetim</h2>
+            <div id="cart-content" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Sepet içeriği buraya JS ile eklenecek -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-800 text-gray-300 mt-16">
+        <div class="container mx-auto px-4 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
+                <!-- Logo ve Sosyal Medya -->
+                <div>
+                    <h3 class="text-3xl font-bold text-white mb-4">PC<span class="text-blue-400">DÜNYASI</span></h3>
+                    <p class="text-gray-400 mb-4">En iyi PC donanımları için tek adresiniz.</p>
+                    <!-- Sosyal medya ikonları eklenebilir -->
+                </div>
+                
+                <!-- Hızlı Linkler -->
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Hızlı Linkler</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white hover:underline">Ana Sayfa</a></li>
+                        <li><a href="#cart" class="hover:text-white hover:underline">Sepetim</a></li>
+                        <li><a href="#" class="hover:text-white hover:underline">Hesabım</a></li>
+                    </ul>
+                </div>
+
+                <!-- Kategoriler -->
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Kategoriler</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="category-link hover:text-white hover:underline" data-category="Ekran Kartı">Ekran Kartları</a></li>
+                        <li><a href="#" class="category-link hover:text-white hover:underline" data-category="İşlemci">İşlemciler</a></li>
+                        <li><a href="#" class="category-link hover:text-white hover:underline" data-category="Anakart">Anakartlar</a></li>
+                        <li><a href="#" class="category-link hover:text-white hover:underline" data-category="Monitör">Monitörler</a></li>
+                    </ul>
+                </div>
+
+                <!-- İletişim -->
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">İletişim</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>Email: destek@pcdunyasi.com</li>
+                        <li>Telefon: +90 (212) 123 45 67</li>
+                        <li>Adres: Teknoloji Plaza, İstanbul</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-500">
+                <p>&copy; 2025 Tüm Hakları Saklıdır. Profesyonel PC Ekipmanları.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bildirim (Toast) Mesajı -->
+    <div id="toast-notification" class="fixed bottom-10 right-10 z-[70] bg-green-500 text-white px-6 py-3 rounded-lg shadow-xl translate-x-full opacity-0 transition-all duration-300 ease-out">
+        <!-- Mesaj buraya eklenecek -->
+    </div>
+
+    <!-- JAVASCRIPT KODLARI -->
+    <script type="module">
+        // --- UYGULAMA DEĞİŞKENLERİ ---
+        
+        /** @type {Array<Object>} */
+        let allProducts = []; // Sunucudan gelen tüm ürünler
+        
+        /** @type {Array<Object>} */
+        let filteredProducts = []; // Arama ve kategori filtresi sonrası ürünler
+        
+        /** @type {Array<Object>} */
+        let cart = []; // Sepetteki ürünler (quantity alanı eklenmiş)
+        
+        let currentPage = 1;
+        const productsPerPage = 12; // Her sayfada 12 ürün göster (Grid 4'lü olunca daha iyi)
+        
+        let currentCategory = 'Tümü'; // Aktif kategoriyi takip et
+        
+        const categories = [
+            "Tümü", "Ekran Kartı", "İşlemci", "Anakart", "RAM", "Monitör", "Kasa", "SSD", "Güç Kaynağı", "Soğutma"
+        ];
+
+        // --- DOM ELEMENTLERİ ---
+        const appContainer = document.getElementById('app-container');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        
+        // Sayfalar
+        const pages = {
+            home: document.getElementById('home-page'),
+            detail: document.getElementById('detail-page'),
+            cart: document.getElementById('cart-page'),
+        };
+        
+        // Ana Sayfa Elementleri
+        const productGrid = document.getElementById('product-grid');
+        const paginationControls = document.getElementById('pagination-controls');
+        const pageTitle = document.getElementById('page-title');
+        
+        // Detay Sayfası Elementleri
+        const productDetailContent = document.getElementById('product-detail-content');
+        
+        // Sepet Sayfası Elementleri
+        const cartContent = document.getElementById('cart-content');
+        
+        // Header Elementleri
+        const searchInput = document.getElementById('search-input');
+        const mobileSearchInput = document.getElementById('mobile-search-input');
+        const cartBadge = document.getElementById('cart-badge');
+        
+        // Mobil Navigasyon Elementleri
+        const mobileNav = document.getElementById('mobile-nav');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileNavClose = document.getElementById('mobile-nav-close');
+        const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+        const mobileCartLink = document.getElementById('mobile-cart-link');
+
+        // Kategori Listeleri
+        const sidebarCategoryList = document.getElementById('sidebar-category-list');
+        const mobileCategoryList = document.getElementById('mobile-category-list');
+        
+        // Bildirim Elementi
+        const toast = document.getElementById('toast-notification');
+
+        // --- UYGULAMA BAŞLANGICI ---
+
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        /**
+         * Uygulamayı başlatan ana fonksiyon
+         */
+        async function initializeApp() {
+            // 1. Kategori listelerini doldur
+            populateCategoryLists();
+            
+            // 2. Sepeti localStorage'dan yükle
+            loadCartFromStorage();
+            
+            // 3. Olay dinleyicilerini bağla
+            addEventListeners();
+            
+            // 4. Ürün verilerini çek
+            try {
+                const response = await fetch('fiyatlar.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                allProducts = await response.json();
+                
+                // Ürünlere benzersiz ID ekle (urun_linki'ni kullanabiliriz)
+                allProducts = allProducts.map(p => ({ ...p, id: p.urun_linki }));
+                
+                filteredProducts = [...allProducts]; // Başlangıçta tüm ürünler gösterilir
+                
+                // 5. URL hash'ine göre doğru sayfayı göster
+                handleRouting();
+                
+                // 6. Aktif kategoriyi güncelle
+                updateActiveCategoryStyles();
+                
+            } catch (error) {
+                console.error("Ürünler yüklenirken hata oluştu:", error);
+                appContainer.innerHTML = `<p class="text-center text-red-500 text-lg">Ürünler yüklenemedi. Lütfen 'fiyatlar.json' dosyasının doğru yerde olduğundan emin olun.</p>`;
+            } finally {
+                loadingIndicator.classList.remove('active');
+            }
+        }
+
+        /**
+         * Gerekli tüm olay dinleyicilerini ekler
+         */
+        function addEventListeners() {
+            // URL hash değişikliğini dinle
+            window.addEventListener('hashchange', handleRouting);
+            
+            // Arama çubukları
+            searchInput.addEventListener('input', (e) => handleSearch(e.target.value));
+            mobileSearchInput.addEventListener('input', (e) => handleSearch(e.target.value));
+            
+            // Kategori linkleri (Tüm .category-link'leri kapsar)
+            document.body.addEventListener('click', (e) => {
+                if (e.target.closest('.category-link')) {
+                    e.preventDefault();
+                    const category = e.target.closest('.category-link').dataset.category;
+                    handleCategoryFilter(category);
+                }
+            });
+            
+            // Mobil menü açma/kapatma
+            mobileMenuBtn.addEventListener('click', () => toggleMobileNav(true));
+            mobileNavClose.addEventListener('click', () => toggleMobileNav(false));
+            mobileNavOverlay.addEventListener('click', () => toggleMobileNav(false));
+            mobileCartLink.addEventListener('click', () => toggleMobileNav(false));
+        }
+        
+        /**
+         * Mobil menüyü açar veya kapatır
+         * @param {boolean} show Gösterilsin mi?
+         */
+        function toggleMobileNav(show) {
+            if (show) {
+                mobileNav.classList.remove('-translate-x-full');
+            } else {
+                mobileNav.classList.add('-translate-x-full');
+            }
+        }
+        
+        /**
+         * Sidebar ve mobil menüdeki kategori listelerini doldurur
+         */
+        function populateCategoryLists() {
+            sidebarCategoryList.innerHTML = '';
+            mobileCategoryList.innerHTML = '';
+            
+            categories.forEach(category => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="#" class="category-link block px-3 py-2 rounded-md transition-colors duration-150 hover:bg-blue-50" data-category="${category}">${category}</a>`;
+                
+                sidebarCategoryList.appendChild(li.cloneNode(true));
+                mobileCategoryList.appendChild(li);
+            });
+        }
+        
+        /**
+         * Tüm kategori linklerindeki aktif stilini günceller
+         */
+        function updateActiveCategoryStyles() {
+            document.querySelectorAll('.category-link').forEach(link => {
+                if (link.dataset.category === currentCategory) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+        
+        // --- YÖNLENDİRME (ROUTING) ---
+
+        /**
+         * URL hash'ine göre ilgili sayfayı render eder
+         */
+        function handleRouting() {
+            const hash = window.location.hash;
+            
+            if (hash.startsWith('#product/')) {
+                // Ürün ID'sini (urun_linki) hash'ten al
+                const productId = decodeURIComponent(hash.substring(9));
+                renderDetailPage(productId);
+            } else if (hash === '#cart') {
+                renderCartPage();
+            } else {
+                // Ana sayfa (veya bilinmeyen hash)
+                window.location.hash = ''; // URL'yi temizle
+                renderHomePage();
+            }
+        }
+        
+        /**
+         * Sayfalar arasında geçişi yönetir
+         * @param {string} activePageId Gösterilecek sayfanın ID'si ('home', 'detail', 'cart')
+         */
+        function showPage(activePageId) {
+            Object.values(pages).forEach(page => page.classList.remove('active'));
+            if (pages[activePageId]) {
+                pages[activePageId].classList.add('active');
+            }
+            window.scrollTo(0, 0); // Sayfa başına git
+        }
+
+        // --- SAYFA RENDER FONKSİYONLARI ---
+
+        /**
+         * Ana sayfayı ve ürünleri render eder
+         */
+        function renderHomePage() {
+            productGrid.innerHTML = ''; // Grid'i temizle
+            
+            // Sayfalamaya göre ürünleri hesapla
+            const startIndex = (currentPage - 1) * productsPerPage;
+            const endIndex = startIndex + productsPerPage;
+            const productsToShow = filteredProducts.slice(startIndex, endIndex);
+
+            if (productsToShow.length === 0) {
+                productGrid.innerHTML = `<p class="col-span-full text-center text-gray-500 text-lg">Aramanızla eşleşen ürün bulunamadı.</p>`;
+            } else {
+                // Her ürün için kart oluştur
+                productsToShow.forEach(product => {
+                    const productCard = createProductCard(product);
+                    productGrid.appendChild(productCard);
+                });
+            }
+            
+            renderPagination();
+            showPage('home');
+        }
+        
+        /**
+         * Ürün detay sayfasını render eder
+         * @param {string} productId Gösterilecek ürünün ID'si (urun_linki)
+         */
+        function renderDetailPage(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            
+            if (!product) {
+                productDetailContent.innerHTML = `<p class="text-red-500">Ürün bulunamadı.</p>`;
+                showPage('detail');
+                return;
+            }
+            
+            // İsteğe göre büyük resmi (resim_linki) kullan
+            productDetailContent.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                    <!-- Ürün Resmi -->
+                    <div class="bg-white rounded-lg p-4 border border-gray-200 sticky top-28">
+                        <img src="${product.resim_linki}" alt="${product.aciklama}" class="w-full h-auto max-h-[500px] object-contain rounded-md" 
+                             onerror="this.onerror=null; this.src='https://placehold.co/600x600/f1f5f9/94a3b8?text=Resim+Yok';">
+                    </div>
+                    
+                    <!-- Ürün Bilgileri -->
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900 mb-4">${product.aciklama}</h1>
+                        
+                        <div class="mb-6">
+                            ${product.kargo ? 
+                                `<span class="text-sm font-medium text-green-600 bg-green-100 px-3 py-1 rounded-full">${product.kargo}</span>` : 
+                                '<span class="text-sm font-medium text-blue-600 bg-blue-100 px-3 py-1 rounded-full">Standart Kargo</span>'
+                            }
+                        </div>
+                        
+                        <p class="text-4xl font-extrabold text-blue-600 mb-8">${formatPrice(product.fiyat)} TL</p>
+                        
+                        <button class="add-to-cart-btn w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg text-lg transition-colors duration-200 flex items-center justify-center space-x-2" data-id="${product.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            <span>Sepete Ekle</span>
+                        </button>
+                        
+                        <div class="mt-8 border-t pt-6 text-gray-700 space-y-4">
+                            <h4 class="text-lg font-semibold">Açıklama</h4>
+                            <p class="text-gray-600 leading-relaxed">${product.aciklama} - Bu alana ürüne ait daha detaylı açıklamalar, teknik özellikler ve benzeri bilgiler eklenebilir. Şimdilik ana açıklamayı tekrar gösteriyoruz.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Sepete ekle butonuna olay dinleyici ekle
+            productDetailContent.querySelector('.add-to-cart-btn').addEventListener('click', (e) => {
+                addToCart(e.currentTarget.dataset.id);
+            });
+            
+            showPage('detail');
+        }
+        
+        /**
+         * Sepet sayfasını render eder
+         */
+        function renderCartPage() {
+            if (cart.length === 0) {
+                cartContent.innerHTML = `
+                    <div class="lg:col-span-3 text-center bg-white p-12 rounded-lg shadow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-24 h-24 text-gray-300 mx-auto mb-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c.121 0 .239.04.335.117l2.828 2.09a.75.75 0 0 1-.028 1.258H7.5M7.5 14.25N6.623 10.5h11.25L16.5 14.25M7.5 14.25" />
+                        </svg>
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-2">Sepetiniz şu anda boş</h3>
+                        <p class="text-gray-500 mb-6">Hemen alışverişe başlayın ve harika ürünleri keşfedin.</p>
+                        <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">Alışverişe Başla</a>
+                    </div>
+                `;
+            } else {
+                // Sepet listesi
+                const itemsHtml = cart.map(item => `
+                    <div class="flex items-start space-x-4 bg-white p-4 rounded-lg shadow">
+                        <img src="${item.kucuk_resim_linki}" alt="${item.aciklama}" class="w-24 h-24 object-contain rounded-md border border-gray-200" 
+                             onerror="this.onerror=null; this.src='https://placehold.co/100x100/f1f5f9/94a3b8?text=Resim';">
+                        <div class="flex-1 min-w-0">
+                            <p class="font-medium text-gray-800 truncate" title="${item.aciklama}">${item.aciklama}</p>
+                            <p class="text-lg font-bold text-blue-600 my-2">${formatPrice(item.fiyat)} TL</p>
+                            <!-- Adet Güncelleme -->
+                            <div class="flex items-center space-x-2">
+                                <button class="quantity-btn p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-id="${item.id}" data-change="-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" /></svg>
+                                </button>
+                                <span class="font-bold w-8 text-center">${item.quantity}</span>
+                                <button class="quantity-btn p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-id="${item.id}" data-change="1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <button class="remove-from-cart-btn text-gray-400 hover:text-red-500 transition-colors" data-id="${item.id}" title="Sepetten Çıkar">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                `).join('');
+
+                // Toplam Tutar
+                const subtotal = cart.reduce((acc, item) => acc + (item.fiyat * item.quantity), 0);
+                const shipping = subtotal > 500 ? 0 : 49.90; // 500 TL üzeri kargo bedava
+                const total = subtotal + shipping;
+                
+                // Sepet Özeti
+                const summaryHtml = `
+                    <div class="bg-white p-6 rounded-lg shadow sticky top-28">
+                        <h3 class="text-xl font-bold border-b pb-3 mb-4">Sipariş Özeti</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Ara Toplam</span>
+                                <span class="font-medium">${formatPrice(subtotal)} TL</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Kargo</span>
+                                ${shipping === 0 ? 
+                                    `<span class="font-medium text-green-600">Bedava</span>` : 
+                                    `<span class="font-medium">${formatPrice(shipping)} TL</span>`
+                                }
+                            </div>
+                            ${subtotal < 500 ? 
+                                `<p class="text-xs text-center text-green-600 bg-green-50 p-2 rounded-md"><b>${formatPrice(500 - subtotal)} TL</b> daha ekleyin, kargo bedava!</p>` : ''
+                            }
+                            <div class="flex justify-between text-lg font-bold pt-3 border-t">
+                                <span>Toplam</span>
+                                <span class="text-blue-600">${formatPrice(total)} TL</span>
+                            </div>
+                        </div>
+                        <button class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-colors duration-200 mt-6 flex items-center justify-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
+                            <span>Güvenli Ödemeye Geç</span>
+                        </button>
+                    </div>
+                `;
+
+                cartContent.innerHTML = `
+                    <div class="lg:col-span-2 space-y-4">
+                        ${itemsHtml}
+                    </div>
+                    <div class="lg:col-span-1">
+                        ${summaryHtml}
+                    </div>
+                `;
+                
+                // Sepet butonlarına olay dinleyicileri ekle
+                cartContent.querySelectorAll('.quantity-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        const change = parseInt(e.currentTarget.dataset.change);
+                        updateCartQuantity(id, change);
+                    });
+                });
+                
+                cartContent.querySelectorAll('.remove-from-cart-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        removeFromCart(e.currentTarget.dataset.id);
+                    });
+                });
+            }
+            
+            showPage('cart');
+        }
+
+        // --- YARDIMCI RENDER FONKSİYONLARI ---
+
+        /**
+         * Tek bir ürün kartı HTML'i oluşturur
+         * @param {Object} product Ürün objesi
+         * @returns {HTMLElement} Oluşturulan div elementi
+         */
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col';
+            
+            // İsteğe göre küçük resmi (kucuk_resim_linki) kullan
+            card.innerHTML = `
+                <a href="#product/${encodeURIComponent(product.id)}" class="block group">
+                    <div class="overflow-hidden">
+                        <img src="${product.kucuk_resim_linki}" alt="${product.aciklama}" 
+                             class="w-full h-48 object-contain p-4 bg-white transition-transform duration-300 group-hover:scale-105" 
+                             onerror="this.onerror=null; this.src='https://placehold.co/320x320/f1f5f9/94a3b8?text=Resim+Yok';">
+                    </div>
+                </a>
+                <div class="p-4 flex flex-col flex-1">
+                    <a href="#product/${encodeURIComponent(product.id)}" class="flex-1">
+                        <h3 class="text-sm font-medium text-gray-800 h-10 line-clamp-2 hover:text-blue-600">${product.aciklama}</h3>
+                    </a>
+                    <div class="mt-4">
+                        <span class="text-xl font-bold text-blue-600">${formatPrice(product.fiyat)} TL</span>
+                        ${product.kargo ? `<p class="text-xs text-green-600 font-medium mt-1">${product.kargo}</p>` : ''}
+                    </div>
+                    <button class="add-to-cart-btn w-full mt-4 bg-blue-50 text-blue-600 hover:bg-blue-100 font-semibold py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center space-x-2" data-id="${product.id}">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                        <span>Sepete Ekle</span>
+                    </button>
+                </div>
+            `;
+            
+            // Sepete ekle butonuna olay dinleyici ekle
+            card.querySelector('.add-to-cart-btn').addEventListener('click', (e) => {
+                addToCart(e.currentTarget.dataset.id);
+            });
+            
+            return card;
+        }
+        
+        /**
+         * Gelişmiş sayfalama kontrollerini oluşturur (Google stili)
+         */
+        function renderPagination() {
+            paginationControls.innerHTML = ''; // Temizle
+            const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+            
+            if (totalPages <= 1) return; // Tek sayfa varsa sayfalama gösterme
+
+            // --- Yeni Sayfalama Mantığı ---
+            const maxButtons = 7; // Gösterilecek maks sayfa/ellipsis butonu (Örn: 1 ... 10 11 12 ... 50)
+            let pagesToShow = [];
+
+            if (totalPages <= maxButtons) {
+                // Toplam sayfa sayısı max'tan azsa, tümünü göster
+                for (let i = 1; i <= totalPages; i++) {
+                    pagesToShow.push(i);
+                }
+            } else {
+                // Çok sayfa varsa, Google stili mantığı
+                let startPages = [1, 2];
+                let endPages = [totalPages - 1, totalPages];
+                let middlePages = [currentPage - 1, currentPage, currentPage + 1];
+
+                // Sayıları birleştir ve unique yap
+                let allPages = [...startPages, ...middlePages, ...endPages]
+                    .filter(page => page >= 1 && page <= totalPages) // Geçerli sayfalar
+                    .filter((value, index, self) => self.indexOf(value) === index) // Benzersiz yap
+                    .sort((a, b) => a - b); // Sırala
+
+                // '...' (ellipsis) ekle
+                let prevPage = 0;
+                for (const page of allPages) {
+                    if (prevPage + 1 < page) {
+                        pagesToShow.push('...'); // Arada boşluk varsa ellipsis ekle
+                    }
+                    pagesToShow.push(page);
+                    prevPage = page;
+                }
+                
+                // Gerekirse butonları kırp (maxButtons'a sığdır)
+                // Bu mantık genelde [1] [...] [c-1] [c] [c+1] [...] [total] yapısını korur
+                if (pagesToShow.length > maxButtons) {
+                    if(currentPage < totalPages / 2) {
+                        // Başa yakınsak: [1] [2] [3] [4] [...] [total]
+                        pagesToShow = [1, 2, 3, 4, 5, '...', totalPages];
+                        if (currentPage > 4) {
+                             pagesToShow = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+                        }
+                    } else {
+                        // Sona yakınsak: [1] [...] [47] [48] [49] [50]
+                        pagesToShow = [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+                         if (currentPage < totalPages - 3) {
+                             pagesToShow = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+                        }
+                    }
+                }
+                // Aktif sayfanın her zaman görünür olmasını sağla (eğer kesildiyse)
+                if (!pagesToShow.includes(currentPage)) {
+                     pagesToShow = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+                }
+            }
+            // --- Bitiş: Yeni Sayfalama Mantığı ---
+
+
+            // Önceki Butonu
+            paginationControls.appendChild(
+                createPaginationButton('Önceki', currentPage > 1 ? currentPage - 1 : null, false, true)
+            );
+            
+            // Sayfa Numaraları ve Ellipsis
+            pagesToShow.forEach(page => {
+                if (page === '...') {
+                    paginationControls.appendChild(createPaginationEllipsis());
+                } else {
+                    paginationControls.appendChild(
+                        createPaginationButton(page.toString(), page, page === currentPage)
+                    );
+                }
+            });
+            
+            // Sonraki Butonu
+            paginationControls.appendChild(
+                createPaginationButton('Sonraki', currentPage < totalPages ? currentPage + 1 : null, false, true)
+            );
+        }
+        
+        /**
+         * Tek bir sayfalama butonu oluşturur
+         * @param {string} text Buton metni
+         * @param {number | null} pageNumber Gidilecek sayfa (null ise disabled)
+         * @param {boolean} [isActive=false] Aktif sayfa mı?
+         * @param {boolean} [isNav=false] Önceki/Sonraki butonu mu?
+         * @returns {HTMLElement} Oluşturulan buton elementi
+         */
+        function createPaginationButton(text, pageNumber, isActive = false, isNav = false) {
+            const button = document.createElement('button');
+            button.innerText = text;
+            
+            let baseClasses = 'px-3 py-2 sm:px-4 sm:py-2 rounded-md font-medium transition-colors duration-150';
+            let sizeClasses = isNav ? 'text-sm' : 'w-10 h-10 text-sm';
+            
+            if (pageNumber === null) {
+                button.className = `${baseClasses} ${sizeClasses} bg-gray-200 text-gray-400 cursor-not-allowed`;
+                button.disabled = true;
+            } else if (isActive) {
+                button.className = `${baseClasses} ${sizeClasses} bg-blue-600 text-white cursor-default`;
+            } else {
+                button.className = `${baseClasses} ${sizeClasses} bg-white text-gray-700 border border-gray-300 hover:bg-gray-100`;
+                button.addEventListener('click', () => {
+                    currentPage = pageNumber;
+                    renderHomePage();
+                });
+            }
+            return button;
+        }
+
+        /**
+         * Sayfalama için '...' (ellipsis) elementi oluşturur
+         * @returns {HTMLElement}
+         */
+        function createPaginationEllipsis() {
+            const span = document.createElement('span');
+            span.className = 'pagination-ellipsis text-sm';
+            span.innerText = '...';
+            return span;
+        }
+
+        // --- FİLTRELEME VE ARAMA ---
+
+        /**
+         * Arama çubuğuna yazılan metne göre ürünleri filtreler
+         * @param {string} searchTerm Aranan metin
+         */
+        function handleSearch(searchTerm) {
+            const term = searchTerm.toLowerCase().trim();
+            
+            // Diğer arama çubuğunu senkronize et
+            if (document.activeElement === searchInput) {
+                mobileSearchInput.value = searchTerm;
+            } else {
+                searchInput.value = searchTerm;
+            }
+            
+            filteredProducts = allProducts.filter(product => 
+                product.aciklama.toLowerCase().includes(term)
+            );
+            currentPage = 1;
+            pageTitle.innerText = term ? `Arama Sonuçları: "${term}"` : 'Tüm Ürünler';
+            
+            // Arama yapınca kategori filtresini sıfırla
+            currentCategory = 'Tümü';
+            updateActiveCategoryStyles();
+            
+            renderHomePage();
+        }
+
+        /**
+         * Kategoriye göre ürünleri filtreler
+         * @param {string} category Kategori adı
+         */
+        function handleCategoryFilter(category) {
+            currentCategory = category;
+            
+            if (category === 'Tümü') {
+                filteredProducts = [...allProducts];
+                pageTitle.innerText = 'Tüm Ürünler';
+            } else {
+                const categoryTerm = category.toLowerCase();
+                filteredProducts = allProducts.filter(product => 
+                    // Kategori adını içeren basit bir filtreleme
+                    product.aciklama.toLowerCase().includes(categoryTerm)
+                );
+                pageTitle.innerText = category;
+            }
+            
+            currentPage = 1;
+            updateActiveCategoryStyles();
+            
+            // Arama çubuklarını temizle
+            searchInput.value = '';
+            mobileSearchInput.value = '';
+            
+            // Mobil menüyü kapat
+            toggleMobileNav(false);
+            
+            // Ana sayfaya yönlendir (eğer değilse)
+            if(window.location.hash) {
+                window.location.hash = '';
+            } else {
+                // Zaten ana sayfadaysa, sadece render et
+                renderHomePage();
+            }
+        }
+
+        // --- SEPET İŞLEVLERİ ---
+
+        /**
+         * Sepete ürün ekler
+         * @param {string} productId Eklenecek ürünün ID'si
+         */
+        function addToCart(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            
+            saveCartToStorage();
+            updateCartBadge();
+            showToast(`${product.aciklama.substring(0, 30)}... sepete eklendi!`);
+        }
+        
+        /**
+         * Sepetten ürün çıkarır
+         * @param {string} productId Çıkarılacak ürünün ID'si
+         */
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            saveCartToStorage();
+            updateCartBadge();
+            renderCartPage(); // Sepet sayfasını yeniden render et
+        }
+        
+        /**
+         * Sepetteki ürünün miktarını günceller
+         * @param {string} productId Güncellenecek ürünün ID'si
+         * @param {number} change Miktar değişimi (+1 veya -1)
+         */
+        function updateCartQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    // Miktar 0'a düşerse sepetten çıkar
+                    removeFromCart(productId);
+                } else {
+                    saveCartToStorage();
+                    updateCartBadge();
+                    renderCartPage(); // Sepet sayfasını yeniden render et
+                }
+            }
+        }
+        
+        /**
+         * Sepet ikonundaki sayacı günceller
+         */
+        function updateCartBadge() {
+            const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+            
+            if (totalItems > 0) {
+                cartBadge.innerText = totalItems;
+                cartBadge.style.display = 'flex';
+            } else {
+                cartBadge.style.display = 'none';
+            }
+        }
+        
+        /**
+         * Sepeti localStorage'a kaydeder
+         */
+        function saveCartToStorage() {
+            localStorage.setItem('pcDunyasiCart', JSON.stringify(cart));
+        }
+        
+        /**
+         * Sepeti localStorage'dan yükler
+         */
+        function loadCartFromStorage() {
+            const savedCart = localStorage.getItem('pcDunyasiCart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            }
+            updateCartBadge();
+        }
+
+        // --- DİĞER YARDIMCI FONKSİYONLAR ---
+        
+        /**
+         * Fiyatı formatlar (örn: 1500.90 -> 1.500,90)
+         * @param {number} price Fiyat
+         * @returns {string} Formatlanmış fiyat
+         */
+        function formatPrice(price) {
+            return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(price);
+        }
+        
+        /**
+         * Ekranda kısa süreli bir bildirim mesajı gösterir
+         * @param {string} message Gösterilecek mesaj
+         */
+        function showToast(message) {
+            toast.innerText = message;
+            toast.classList.remove('opacity-0', 'translate-x-full');
+            toast.classList.add('opacity-100', 'translate-x-0');
+            
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-x-0');
+                toast.classList.add('opacity-0', 'translate-x-full');
+            }, 3000);
+        }
+
+    </script>
+
+</body>
+</html>
+
