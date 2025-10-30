@@ -284,46 +284,53 @@
                 <!-- Ana İçerik Alanı (Yeni Stil) -->
                 <div class="lg:col-span-9 space-y-12">
                 
-                    <!-- 1. Hero Banner (Yeni Bölüm) -->
-                    <div class="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-8 md:p-12 rounded-lg shadow-lg flex items-center">
-                        <div class="flex-1">
-                            <h2 class="text-3xl md:text-4xl font-bold mb-3">Maksimum Performans</h2>
-                            <p class="text-lg text-gray-300 mb-6">En yeni nesil bileşenlerle gücünüzü keşfedin.</p>
-                            <a href="#category/Ekran%20Kartı" class="bg-white text-gray-900 font-bold py-3 px-6 rounded-lg hover:bg-gray-200 transition-colors">
+                    <!-- 1. Hero Banner (GÜNCELLENDİ) -->
+                    <!-- İstekleriniz doğrultusunda metin sola, görsel sağa alındı (mobilde alt alta) -->
+                    <div class="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col md:flex-row min-h-[250px]">
+                        <!-- Metin İçeriği -->
+                        <div class="md:w-1/2 p-8 md:p-12 flex flex-col justify-center order-2 md:order-1 bg-gray-50">
+                            <h2 class="text-3xl md:text-4xl font-bold mb-3 text-gray-900">Maksimum Performans</h2>
+                            <p class="text-lg text-gray-600 mb-6">En yeni nesil bileşenlerle gücünüzü keşfedin.</p>
+                            <a href="#category/Ekran%20Kartı" class="bg-blue-700 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-800 transition-colors self-start">
                                 Ekran Kartları
                             </a>
                         </div>
-                        <div class="hidden md:block w-1/3">
-                            <!-- Placeholder - Gerçek bir resim URL'si ile değiştirilebilir -->
-                            <img src="https://placehold.co/300x200/374151/e5e7eb?text=PC+Bileşenleri" alt="PC Bileşenleri" class="rounded-lg object-cover">
+                        <!-- Görsel İçeriği (Kırpılmış) -->
+                        <div class="md:w-1/2 order-1 md:order-2 h-64 md:h-auto">
+                            <img src="https://www.bizdehesapli.com/banner/1761812514.jpg" 
+                                 alt="PC Kasaları" 
+                                 class="w-full h-full object-cover object-right"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/600x400/374151/e5e7eb?text=PC+Bileşenleri';">
                         </div>
                     </div>
 
-                    <!-- 2. Küçük Tanıtım Kutuları (Yeni Bölüm) -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- 2. Küçük Tanıtım Kutuları (GÜNCELLENDİ) -->
+                    <!-- NOT: Responsive yapı grid-cols-1 sm:grid-cols-2 olarak güncellendi -->
+                    <!-- NOT: Resimler artık JS ile dinamik olarak doldurulacak -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                         <a href="#category/İşlemci" class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow flex items-center space-x-3">
-                            <img src="https://placehold.co/48x48/e0f2fe/0c4a6e?text=CPU" class="w-12 h-12 rounded-md" alt="İşlemci İkonu">
+                            <img id="promo-img-işlemci" src="https://placehold.co/48x48/e0f2fe/0c4a6e?text=CPU" class="w-12 h-12 rounded-md object-contain" alt="İşlemci İkonu" onerror="this.onerror=null; this.src='https://placehold.co/48x48/e0f2fe/0c4a6e?text=CPU';">
                             <div>
                                 <h4 class="font-semibold text-gray-800">İşlemciler</h4>
                                 <p class="text-sm text-gray-500">En hızlı CPU'lar</p>
                             </div>
                         </a>
                         <a href="#category/Monitör" class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow flex items-center space-x-3">
-                             <img src="https://placehold.co/48x48/e0f2fe/0c4a6e?text=Ekran" class="w-12 h-12 rounded-md" alt="Monitör İkonu">
+                             <img id="promo-img-monitör" src="https://placehold.co/48x48/e0f2fe/0c4a6e?text=Ekran" class="w-12 h-12 rounded-md object-contain" alt="Monitör İkonu" onerror="this.onerror=null; this.src='https://placehold.co/48x48/e0f2fe/0c4a6e?text=Ekran';">
                             <div>
                                 <h4 class="font-semibold text-gray-800">Monitörler</h4>
                                 <p class="text-sm text-gray-500">Canlı Renkler</p>
                             </div>
                         </a>
                         <a href="#category/RAM" class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow flex items-center space-x-3">
-                             <img src="https://placehold.co/48x48/e0f2fe/0c4a6e?text=RAM" class="w-12 h-12 rounded-md" alt="RAM İkonu">
+                             <img id="promo-img-ram" src="https://placehold.co/48x48/e0f2fe/0c4a6e?text=RAM" class="w-12 h-12 rounded-md object-contain" alt="RAM İkonu" onerror="this.onerror=null; this.src='https://placehold.co/48x48/e0f2fe/0c4a6e?text=RAM';">
                             <div>
                                 <h4 class="font-semibold text-gray-800">Bellekler</h4>
                                 <p class="text-sm text-gray-500">Yüksek Hız</p>
                             </div>
                         </a>
                          <a href="#category/Kasa" class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow flex items-center space-x-3">
-                             <img src="https://placehold.co/48x48/e0f2fe/0c4a6e?text=Kasa" class="w-12 h-12 rounded-md" alt="Kasa İkonu">
+                             <img id="promo-img-kasa" src="https://placehold.co/48x48/e0f2fe/0c4a6e?text=Kasa" class="w-12 h-12 rounded-md object-contain" alt="Kasa İkonu" onerror="this.onerror=null; this.src='https://placehold.co/48x48/e0f2fe/0c4a6e?text=Kasa';">
                             <div>
                                 <h4 class="font-semibold text-gray-800">Kasalar</h4>
                                 <p class="text-sm text-gray-500">Şık Tasarımlar</p>
@@ -541,11 +548,14 @@
                     return { 
                         ...p, 
                         id: uniqueId,
-                        categoryKeyword: detectCategory(p.aciklama) 
+                        categoryKeyword: detectCategory(p.aciklama) // Kategori belirleme GÜNCELLENDİ
                     };
                 });
                 
                 filteredProducts = [...allProducts];
+                
+                // YENİ: Kategori kutularını dinamik resimlerle doldur
+                populateCategoryBoxes();
                 
                 handleRouting();
                 updateActiveCategoryStyles();
@@ -637,6 +647,29 @@
                 mobileCategoryList.appendChild(mainLi);
                 footerCategoryList.appendChild(footerLi);
             });
+        }
+        
+        /**
+         * YENİ: Ana sayfadaki küçük kategori kutularını dinamik resimlerle doldurur
+         */
+        function populateCategoryBoxes() {
+            const categoriesToUpdate = {
+                'işlemci': 'promo-img-işlemci',
+                'monitör': 'promo-img-monitör',
+                'ram': 'promo-img-ram',
+                'kasa': 'promo-img-kasa'
+            };
+
+            for (const [categoryName, imgId] of Object.entries(categoriesToUpdate)) {
+                const imgElement = document.getElementById(imgId);
+                if (imgElement) {
+                    // Kategoriye uyan ilk ürünü bul
+                    const product = allProducts.find(p => p.categoryKeyword.toLowerCase() === categoryName);
+                    if (product && product.kucuk_resim_linki) {
+                        imgElement.src = product.kucuk_resim_linki;
+                    }
+                }
+            }
         }
         
         /**
@@ -1201,30 +1234,41 @@
         }
         
         /**
-         * Ürün açıklamasına göre kategoriyi akıllıca tahmin eder
+         * Ürün açıklamasına göre kategoriyi akıllıca tahmin eder (GÜNCELLENDİ)
+         * Daha mantıklı bir öncelik sırasına göre yeniden düzenlendi.
          */
         function detectCategory(aciklama) {
             const lowerAciklama = aciklama.toLowerCase();
-            
-            if (lowerAciklama.includes('mouse') || lowerAciklama.includes('fare')) return "Mouse";
-            if (lowerAciklama.includes('klavye') || lowerAciklama.includes('keyboard')) return "Klavye";
-            if (lowerAciklama.includes('kulaklık') || lowerAciklama.includes('headset')) return "Kulaklık";
-            if (lowerAciklama.includes('hoparlör') || lowerAciklama.includes('speaker')) return "Hoparlör";
-            if (lowerAciklama.includes('monitör') || lowerAciklama.includes('monitor') || /\d{2,}\s*inç|\d{2,}"/i.test(aciklama)) return "Monitör";
+
+            // 1. Core Components (Regex) - En spesifik olanlar
             if (/\b(rtx|gtx)\s*(\d{4}|\d{3}0)/i.test(lowerAciklama) || /\b(rx)\s*(\d{4}|\d{3}0)/i.test(lowerAciklama) || lowerAciklama.includes('arc a')) return "Ekran Kartı";
-            if (/\b(b\d{3}m?|x\d{3}|z\d{3}|a\d{3})\b/i.test(lowerAciklama) && !lowerAciklama.includes('kasa')) return "Anakart";
             if (/\b(ryzen|core i)\s*(\d|x)\b/i.test(lowerAciklama) || lowerAciklama.includes('soket')) return "İşlemci";
+            if (/\b(b\d{3}m?|x\d{3}|z\d{3}|a\d{3})\b/i.test(lowerAciklama) && !lowerAciklama.includes('kasa')) return "Anakart";
+
+            // 2. Core Components (Keywords) - Fallback
+            if (lowerAciklama.includes('ekran kartı')) return "Ekran Kartı";
+            if (lowerAciklama.includes('işlemci')) return "İşlemci";
+            if (lowerAciklama.includes('anakart') || lowerAciklama.includes('motherboard')) return "Anakart";
+
+            // 3. Memory & Storage
             if (/\d+gb\s*ddr\d/i.test(lowerAciklama) || (lowerAciklama.includes('ram') && !lowerAciklama.includes('ekran kartı'))) return "RAM";
             if (lowerAciklama.includes('ssd') || lowerAciklama.includes('m.2') || lowerAciklama.includes('nvme')) return "SSD";
+
+            // 4. Chassis, Power & Cooling
             if (lowerAciklama.includes('psu') || lowerAciklama.includes('güç kaynağı') || (/\d{3,}w/i.test(lowerAciklama) && (lowerAciklama.includes('80+') || lowerAciklama.includes('pfc')))) return "Güç Kaynağı";
             if ((lowerAciklama.includes('soğutucu') || lowerAciklama.includes('soğutma') || lowerAciklama.includes('cooler') || lowerAciklama.includes('fan'))
                 && !lowerAciklama.includes('kasa') && !lowerAciklama.includes('güç kaynağı') && !lowerAciklama.includes('psu')
                 && !/\b(rtx|gtx|rx)\b/i.test(lowerAciklama)) return "Soğutma";
             if (lowerAciklama.includes('kasa') || lowerAciklama.includes('case')) return "Kasa";
-            if (lowerAciklama.includes('anakart') || lowerAciklama.includes('motherboard')) return "Anakart";
-            if (lowerAciklama.includes('ekran kartı')) return "Ekran Kartı";
-            if (lowerAciklama.includes('işlemci')) return "İşlemci";
+            
+            // 5. Peripherals
+            if (lowerAciklama.includes('monitör') || lowerAciklama.includes('monitor') || /\d{2,}\s*inç|\d{2,}"/i.test(aciklama)) return "Monitör";
+            if (lowerAciklama.includes('mouse') || lowerAciklama.includes('fare')) return "Mouse";
+            if (lowerAciklama.includes('klavye') || lowerAciklama.includes('keyboard')) return "Klavye";
+            if (lowerAciklama.includes('kulaklık') || lowerAciklama.includes('headset')) return "Kulaklık";
+            if (lowerAciklama.includes('hoparlör') || lowerAciklama.includes('speaker')) return "Hoparlör";
 
+            // 6. Last effort check (from original code)
             const match = aciklama.match(/\(([^)]+)\)$/);
             if (match) {
                 const potentialCategory = match[1].trim();
@@ -1232,8 +1276,10 @@
                     return categories.find(c => c.toLowerCase() === potentialCategory.toLowerCase());
                 }
             }
+            
             return "Diğer";
         }
+
 
         // --- SEPET İŞLEVLERİ ---
 
@@ -1348,3 +1394,4 @@
 
 </body>
 </html>
+
