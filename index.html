@@ -393,13 +393,24 @@
                 allProducts = await response.json();
                 
                 // Ürünlere benzersiz ID ekle ve KATEGORİ TESPİTİ YAP
-                allProducts = allProducts.map(p => ({ 
-                    ...p, 
-                    id: p.urun_linki, // urun_linki, ID olarak kullanılacak
+                allProducts = allProducts.map(p => {
+                    let uniqueId = '';
+                    if (p.urun_linki.includes('urun-')) {
+                        const parts = p.urun_linki.split('urun-');
+                        uniqueId = parts[parts.length - 1]; // örn: "DUAL-RTX5060TI-O8G"
+                    } else {
+                        // Fallback: URL'nin son kısmını al
+                        const parts = p.urun_linki.split('/');
+                        uniqueId = parts[parts.length - 1];
+                    }
                     
-                    // GÜNCELLEME: Gelişmiş kategori tespit fonksiyonu kullanılıyor
-                    categoryKeyword: detectCategory(p.aciklama) 
-                }));
+                    return { 
+                        ...p, 
+                        id: uniqueId, // GÜNCELLEME: 'id' alanı artık 'urun-' kodu veya URL sonu
+                        // urun_linki'ni orijinal haliyle koru
+                        categoryKeyword: detectCategory(p.aciklama) 
+                    };
+                });
                 
                 filteredProducts = [...allProducts]; // Başlangıçta tüm ürünler gösterilir
                 
@@ -450,13 +461,15 @@
             mobileCategoryList.addEventListener('click', (e) => {
                 const link = e.target.closest('.category-link');
                 if (link) {
-                    // e.preventDefault(); // KALDIRILDI - Hash'in doğal olarak değişmesine izin ver.
-                    // const category = link.dataset.category; // KALDIRILDI
-                    // window.location.hash = category === 'Tümü' ? '/' : `#category/${encodeURIComponent(category)}`; // KALDIRILDI
+                    e.preventDefault(); // 1. Varsayılan 'a' etiket tıklamasını engelle
                     
-                    // 'hashchange' olayı yönlendirmeyi halledecek.
+                    // 2. Kategoriyi data attribute'dan al
+                    const category = link.dataset.category;
                     
-                    // Menüyü hemen kapat
+                    // 3. Hash'i manuel olarak ayarla. Bu, 'hashchange' dinleyicisini tetikleyecek.
+                    window.location.hash = category === 'Tümü' ? '/' : `#category/${encodeURIComponent(category)}`;
+                    
+                    // 4. Menüyü hemen kapat
                     toggleMobileNav(false); 
                 }
             });
@@ -1201,5 +1214,6 @@
 
 </body>
 </html>
+
 
 
