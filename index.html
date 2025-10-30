@@ -253,7 +253,7 @@
 
     <!-- FOOTER -->
     <footer class="bg-gray-800 text-gray-300 mt-16">
-        <div class="container mx-auto px-4 py-16">
+        <div class="container mx-auto px-4 py-12"> <!-- GÜNCELLEME: py-16 -> py-12 -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
                 <!-- Logo ve Sosyal Medya -->
                 <div>
@@ -290,7 +290,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-500">
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-500"> <!-- GÜNCELLEME: mt-12 pt-8 -> mt-8 pt-6 -->
                 <p>&copy; 2025 Tüm Hakları Saklıdır. Yc Store.</p>
             </div>
         </div>
@@ -446,14 +446,15 @@
                 }
             });
             
-            // DÜZELTME: Mobil Sidebar Kategorileri (Masaüstü ile aynı mantıkta çalışıyor)
+            // DÜZELTME: Mobil Sidebar Kategorileri
             mobileCategoryList.addEventListener('click', (e) => {
                 const link = e.target.closest('.category-link');
                 if (link) {
-                    e.preventDefault(); // Varsayılan hash navigasyonunu engelle
-                    const category = link.dataset.category;
-                    // Hash'i manuel olarak ayarla (bu hashchange'i tetikleyecek)
-                    window.location.hash = category === 'Tümü' ? '/' : `#category/${encodeURIComponent(category)}`;
+                    // e.preventDefault(); // KALDIRILDI - Hash'in doğal olarak değişmesine izin ver.
+                    // const category = link.dataset.category; // KALDIRILDI
+                    // window.location.hash = category === 'Tümü' ? '/' : `#category/${encodeURIComponent(category)}`; // KALDIRILDI
+                    
+                    // 'hashchange' olayı yönlendirmeyi halledecek.
                     
                     // Menüyü hemen kapat
                     toggleMobileNav(false); 
@@ -973,9 +974,13 @@
                 searchInput.value = searchTerm;
             }
             
-            filteredProducts = allProducts.filter(product => 
-                product.aciklama.toLowerCase().includes(term)
-            );
+            // GÜNCELLEME: Sadece açıklamayı değil, kategori adını da ara
+            filteredProducts = allProducts.filter(product => {
+                const lowerAciklama = product.aciklama.toLowerCase();
+                const lowerCategory = product.categoryKeyword.toLowerCase(); 
+                
+                return lowerAciklama.includes(term) || lowerCategory.includes(term);
+            });
             currentPage = 1;
             pageTitle.innerText = term ? `Arama Sonuçları: "${term}"` : 'Tüm Ürünler';
             
@@ -1000,7 +1005,8 @@
             currentCategory = category;
             
             if (category === 'Tümü') {
-                filteredProducts = [...allProducts];
+                // GÜNCELLEME: Ana sayfayı her seferinde karıştır
+                filteredProducts = [...allProducts].sort(() => 0.5 - Math.random());
             } else {
                 const categoryTerm = category.toLowerCase();
                 
@@ -1195,3 +1201,5 @@
 
 </body>
 </html>
+
+
