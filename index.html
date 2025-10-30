@@ -103,7 +103,7 @@
     <!-- MOBİL MENÜ (Kayar Panel) -->
     <div id="mobile-nav" class="fixed inset-0 bg-black bg-opacity-50 z-[60] transform -translate-x-full lg:hidden">
         <!-- Menü İçeriği -->
-        <div class="relative w-4/5 max-w-sm h-full bg-white shadow-xl flex flex-col">
+        <div id="mobile-menu-panel" class="relative w-4/5 max-w-sm h-full bg-white shadow-xl flex flex-col"> <!-- GÜNCELLEME: id="mobile-menu-panel" eklendi -->
             <!-- Menü Başlığı -->
             <div class="flex justify-between items-center p-4 border-b">
                 <a href="#/" class="text-2xl font-bold text-blue-600 tracking-tight">Yc<span class="text-gray-800">Store</span></a>
@@ -131,7 +131,7 @@
             </div>
         </div>
         <!-- Kapatmak için dışarı tıkla alanı -->
-        <div id="mobile-nav-overlay" class="absolute inset-0 w-full h-full"></div>
+        <!-- <div id="mobile-nav-overlay" class="absolute inset-0 w-full h-full"></div> --> <!-- GÜNCELLEME: Bu satır kaldırıldı -->
     </div>
 
     <!-- HEADER -->
@@ -321,7 +321,7 @@
         
         // GÜNCELLEME: Kategoriler daha dinamik ve "Diğer" kategorisi eklendi
         const categories = [
-            "Tümü", "Ekran Kartı", "İşlemci", "Anakart", "RAM", "Monitör", "Kasa", "SSD", "Güç Kaynağı", "Soğutma", "Diğer"
+            "Tümü", "Ekran Kartı", "İşlemci", "Anakart", "RAM", "SSD", "Güç Kaynağı", "Kasa", "Soğutma", "Monitör", "Klavye", "Mouse", "Kulaklık", "Hoparlör", "Diğer"
         ];
 
         // --- DOM ELEMENTLERİ ---
@@ -355,7 +355,8 @@
         const mobileNav = document.getElementById('mobile-nav');
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileNavClose = document.getElementById('mobile-nav-close');
-        const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+        // const mobileNavOverlay = document.getElementById('mobile-nav-overlay'); // GÜNCELLEME: Kaldırıldı
+        const mobileMenuPanel = document.getElementById('mobile-menu-panel'); // GÜNCELLEME: Eklendi
         const mobileCartLink = document.getElementById('mobile-cart-link');
 
         // Kategori Listeleri
@@ -442,7 +443,13 @@
             // Mobil menü açma/kapatma
             mobileMenuBtn.addEventListener('click', () => toggleMobileNav(true));
             mobileNavClose.addEventListener('click', () => toggleMobileNav(false));
-            mobileNavOverlay.addEventListener('click', () => toggleMobileNav(false));
+            // mobileNavOverlay.addEventListener('click', () => toggleMobileNav(false)); // GÜNCELLEME: Kaldırıldı
+            
+            // GÜNCELLEME: Menü dışına (backdrop) tıklandığında menüyü kapat
+            mobileNav.addEventListener('click', () => toggleMobileNav(false));
+            
+            // GÜNCELLEME: Menü *içine* tıklandığında (panele) menünün kapanmasını engelle
+            mobileMenuPanel.addEventListener('click', (e) => e.stopPropagation());
             
             // Mobil menüdeki sepet linkine tıklandığında menüyü kapat
             mobileCartLink.addEventListener('click', () => toggleMobileNav(false));
@@ -1047,37 +1054,87 @@
          */
         function detectCategory(aciklama) {
             const lowerAciklama = aciklama.toLowerCase();
-            
-            // Anahtar kelimeler (daha spesifik olanlar önce gelmeli)
-            if (lowerAciklama.includes('ekran kartı') || lowerAciklama.includes('rtx') || lowerAciklama.includes('gtx') || lowerAciklama.includes('radeon rx') || lowerAciklama.includes('arc a')) {
-                return "Ekran Kartı";
+
+            // --- ÖNCELİK 1: ÇEVRE BİRİMLERİ (Peripherals) ---
+            // Bunlar en az belirsiz olanlardır ve diğer bileşen adlarını içerebilirler (örn. "Anakart uyumlu mouse")
+            // Bu yüzden en başta kontrol edilmeliler.
+            if (lowerAciklama.includes('mouse') || lowerAciklama.includes('fare')) {
+                return "Mouse";
             }
-            if (lowerAciklama.includes('işlemci') || lowerAciklama.includes('ryzen') || lowerAciklama.includes('core i') || lowerAciklama.includes('soket')) {
-                return "İşlemci";
+            if (lowerAciklama.includes('klavye') || lowerAciklama.includes('keyboard')) {
+                return "Klavye";
             }
-            if (lowerAciklama.includes('anakart') || lowerAciklama.includes('motherboard') || /\b(b\d{3}m?|x\d{3}|z\d{3}|a\d{3})\b/i.test(aciklama)) { // örn: B550M, X670, Z790, A620
-                return "Anakart";
+            if (lowerAciklama.includes('kulaklık') || lowerAciklama.includes('headset')) {
+                return "Kulaklık";
             }
-            if (lowerAciklama.includes('ram') || lowerAciklama.includes('bellek') || /\d+gb\s*ddr\d/i.test(aciklama)) { // örn: 16GB DDR5
-                return "RAM";
+            if (lowerAciklama.includes('hoparlör') || lowerAciklama.includes('speaker')) {
+                return "Hoparlör";
             }
-            if (lowerAciklama.includes('monitör') || lowerAciklama.includes('monitor') || /\d{2,}\s*inç|\d{2,}"/i.test(aciklama)) { // örn: 27 inç, 27"
+            if (lowerAciklama.includes('monitör') || lowerAciklama.includes('monitor') || /\d{2,}\s*inç|\d{2,}"/i.test(aciklama)) { 
                 return "Monitör";
             }
-             // Güç Kaynağı (PSU) - Kasa'dan önce kontrol edilmeli
-            if (lowerAciklama.includes('psu') || lowerAciklama.includes('güç kaynağı') || (/\d{3,}w/i.test(aciklama) && (lowerAciklama.includes('80+') || lowerAciklama.includes('pfc') || lowerAciklama.includes('power supply')))) {
-                return "Güç Kaynağı";
+
+            // --- ÖNCELİK 2: KESİN PARÇA KODLARI (Çipsetler, Modeller) ---
+            
+            // Ekran Kartı (Spesifik Modeller)
+            // örn: RTX 4070, GTX 1660, RX 7800
+            if (/\b(rtx|gtx)\s*(\d{4}|\d{3}0)/i.test(lowerAciklama) || /\b(rx)\s*(\d{4}|\d{3}0)/i.test(lowerAciklama) || lowerAciklama.includes('arc a')) {
+                return "Ekran Kartı";
             }
-            if (lowerAciklama.includes('kasa') || lowerAciklama.includes('case') || lowerAciklama.includes('atx kasa')) {
-                return "Kasa";
+            // Anakart (Spesifik Çipsetler)
+            // örn: B550, X670, Z790, A620
+            if (/\b(b\d{3}m?|x\d{3}|z\d{3}|a\d{3})\b/i.test(lowerAciklama) && !lowerAciklama.includes('kasa')) {
+                return "Anakart";
             }
-            if (lowerAciklama.includes('ssd') || lowerAciklama.includes('m.2 ssd') || lowerAciklama.includes('sata ssd') || lowerAciklama.includes('nvme')) {
+            // İşlemci (Spesifik Modeller)
+            // örn: Ryzen 5, Core i7
+            if (/\b(ryzen|core i)\s*(\d|x)\b/i.test(lowerAciklama) || lowerAciklama.includes('soket')) {
+                return "İşlemci";
+            }
+            // RAM (Spesifik Format)
+            // örn: 16GB DDR5
+            if (/\d+gb\s*ddr\d/i.test(lowerAciklama) || (lowerAciklama.includes('ram') && !lowerAciklama.includes('ekran kartı'))) { 
+                return "RAM";
+            }
+            // SSD (Spesifik Teknoloji)
+            if (lowerAciklama.includes('ssd') || lowerAciklama.includes('m.2') || lowerAciklama.includes('nvme')) {
                 return "SSD";
             }
-            if (lowerAciklama.includes('soğutma') || lowerAciklama.includes('soğutucu') || lowerAciklama.includes('cooler') || lowerAciklama.includes('fan') || lowerAciklama.includes('sıvı soğutma')) {
+            // Güç Kaynağı (Spesifik Terimler)
+            // örn: 750W 80+
+            if (lowerAciklama.includes('psu') || lowerAciklama.includes('güç kaynağı') || (/\d{3,}w/i.test(lowerAciklama) && (lowerAciklama.includes('80+') || lowerAciklama.includes('pfc')))) {
+                return "Güç Kaynağı";
+            }
+            
+            // --- ÖNCELİK 3: KASA VE SOĞUTMA (Genel terimler + Dışlamalar) ---
+            
+            // Soğutma (Kasa, PSU ve Ekran Kartı'nı dışla)
+            if ((lowerAciklama.includes('soğutucu') || lowerAciklama.includes('soğutma') || lowerAciklama.includes('cooler') || lowerAciklama.includes('fan'))
+                && !lowerAciklama.includes('kasa') // "fanlı kasa" değil
+                && !lowerAciklama.includes('güç kaynağı') // "fanlı psu" değil
+                && !lowerAciklama.includes('psu')
+                && !/\b(rtx|gtx|rx)\b/i.test(lowerAciklama) // "3 fanlı ekran kartı" değil
+            ) {
                 return "Soğutma";
             }
             
+            // Kasa (Soğutma'dan sonra)
+            if (lowerAciklama.includes('kasa') || lowerAciklama.includes('case')) {
+                return "Kasa";
+            }
+
+            // --- ÖNCELİK 4: GENEL PARÇA TERİMLERİ (Yakalama amaçlı) ---
+            // (Peripherals kontrolünden sonra geldikleri için daha güvenliler)
+            if (lowerAciklama.includes('anakart') || lowerAciklama.includes('motherboard')) {
+                return "Anakart";
+            }
+            if (lowerAciklama.includes('ekran kartı')) {
+                return "Ekran Kartı";
+            }
+             if (lowerAciklama.includes('işlemci')) {
+                return "İşlemci";
+            }
+
             // Eski (parantez içi) mantığı yedek olarak tut
             const match = aciklama.match(/\(([^)]+)\)$/);
             if (match) {
@@ -1214,6 +1271,8 @@
 
 </body>
 </html>
+
+
 
 
 
