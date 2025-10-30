@@ -88,7 +88,7 @@
             transition: transform 0.3s ease-in-out;
         }
         
-        /* Kategori menüsünün scrollbar'ını gizle (Webkit) */
+        /* Kategori menüsünün ve küçük resim galerisinin scrollbar'ını gizle (Webkit) */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -123,7 +123,7 @@
             </a>
 
             <!-- Mobil Kategori Listesi -->
-            <div class="p-4">
+            <div class="p-4 overflow-y-auto no-scrollbar">
                 <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Kategoriler</h3>
                 <ul id="mobile-category-list" class="flex flex-col space-y-1">
                     <!-- Kategoriler JS ile buraya eklenecek -->
@@ -275,12 +275,8 @@
                 <!-- Kategoriler -->
                 <div>
                     <h4 class="text-lg font-semibold text-white mb-4">Kategoriler</h4>
-                    <ul class="space-y-2">
-                        <!-- DÜZELTME: Kategori linkleri hash ile güncellendi -->
-                        <li><a href="#category/Ekran%20Kartı" class="category-link hover:text-white hover:underline" data-category="Ekran Kartı">Ekran Kartları</a></li>
-                        <li><a href="#category/%C4%B0%C5%9Flemci" class="category-link hover:text-white hover:underline" data-category="İşlemci">İşlemciler</a></li>
-                        <li><a href="#category/Anakart" class="category-link hover:text-white hover:underline" data-category="Anakart">Anakartlar</a></li>
-                        <li><a href="#category/Monit%C3%B6r" class="category-link hover:text-white hover:underline" data-category="Monitör">Monitörler</a></li>
+                    <ul id="footer-category-list" class="space-y-2">
+                        <!-- DÜZELTME: Kategori linkleri JS ile eklenecek -->
                     </ul>
                 </div>
 
@@ -323,8 +319,9 @@
         
         let currentCategory = 'Tümü'; // Aktif kategoriyi takip et
         
+        // GÜNCELLEME: Kategoriler daha dinamik ve "Diğer" kategorisi eklendi
         const categories = [
-            "Tümü", "Ekran Kartı", "İşlemci", "Anakart", "RAM", "Monitör", "Kasa", "SSD", "Güç Kaynağı", "Soğutma"
+            "Tümü", "Ekran Kartı", "İşlemci", "Anakart", "RAM", "Monitör", "Kasa", "SSD", "Güç Kaynağı", "Soğutma", "Diğer"
         ];
 
         // --- DOM ELEMENTLERİ ---
@@ -364,6 +361,7 @@
         // Kategori Listeleri
         const sidebarCategoryList = document.getElementById('sidebar-category-list');
         const mobileCategoryList = document.getElementById('mobile-category-list');
+        const footerCategoryList = document.getElementById('footer-category-list');
         
         // Bildirim Elementi
         const toast = document.getElementById('toast-notification');
@@ -376,7 +374,7 @@
          * Uygulamayı başlatan ana fonksiyon
          */
         async function initializeApp() {
-            // 1. Kategori listelerini doldur
+            // 1. Kategori listelerini doldur (Sidebar, Mobil, Footer)
             populateCategoryLists();
             
             // 2. Sepeti localStorage'dan yükle
@@ -394,14 +392,13 @@
                 }
                 allProducts = await response.json();
                 
-                // Ürünlere benzersiz ID ekle (urun_linki'yi ID olarak kullanacağız)
+                // Ürünlere benzersiz ID ekle ve KATEGORİ TESPİTİ YAP
                 allProducts = allProducts.map(p => ({ 
                     ...p, 
                     id: p.urun_linki, // urun_linki, ID olarak kullanılacak
                     
-                    // Kategori filtresi için bir anahtar kelime listesi oluştur
-                    // Örneğin: "Ryzen 5 7600X (İşlemci)" -> Kategori: "İşlemci"
-                    categoryKeyword: (p.aciklama.match(/\(([^)]+)\)$/) ? p.aciklama.match(/\(([^)]+)\)$/)[1] : '').trim() 
+                    // GÜNCELLEME: Gelişmiş kategori tespit fonksiyonu kullanılıyor
+                    categoryKeyword: detectCategory(p.aciklama) 
                 }));
                 
                 filteredProducts = [...allProducts]; // Başlangıçta tüm ürünler gösterilir
@@ -436,15 +433,9 @@
             mobileNavClose.addEventListener('click', () => toggleMobileNav(false));
             mobileNavOverlay.addEventListener('click', () => toggleMobileNav(false));
             
-            // Mobil menüdeki linklere tıklandığında menüyü kapat
+            // Mobil menüdeki sepet linkine tıklandığında menüyü kapat
             mobileCartLink.addEventListener('click', () => toggleMobileNav(false));
-            mobileCategoryList.addEventListener('click', (e) => {
-                if (e.target.closest('.category-link')) {
-                    toggleMobileNav(false);
-                }
-            });
             
-            // *** DÜZELTME: Kategori linklerine tıklama olay dinleyicileri eklendi ***
             // Masaüstü Sidebar Kategorileri
             sidebarCategoryList.addEventListener('click', (e) => {
                 const link = e.target.closest('.category-link');
@@ -452,17 +443,29 @@
                     e.preventDefault(); // Varsayılan hash navigasyonunu engelle
                     const category = link.dataset.category;
                     window.location.hash = category === 'Tümü' ? '/' : `#category/${encodeURIComponent(category)}`;
-                    
-                    // handleRouting hashchange event'i tarafından tetiklenecek
                 }
             });
             
-            // Mobil Sidebar Kategorileri (zaten bir event listener'ı var, ama biz handleRouting'i tetikleyelim)
-             mobileCategoryList.addEventListener('click', (e) => {
+            // DÜZELTME: Mobil Sidebar Kategorileri (Masaüstü ile aynı mantıkta çalışıyor)
+            mobileCategoryList.addEventListener('click', (e) => {
                 const link = e.target.closest('.category-link');
                 if (link) {
+                    e.preventDefault(); // Varsayılan hash navigasyonunu engelle
                     const category = link.dataset.category;
+                    // Hash'i manuel olarak ayarla (bu hashchange'i tetikleyecek)
                     window.location.hash = category === 'Tümü' ? '/' : `#category/${encodeURIComponent(category)}`;
+                    
+                    // Menüyü hemen kapat
+                    toggleMobileNav(false); 
+                }
+            });
+            
+            // Footer kategori linkleri (normal link davranışı)
+            footerCategoryList.addEventListener('click', (e) => {
+                const link = e.target.closest('.category-link');
+                if (link) {
+                    // hashchange event'i gerisini halledecek
+                    window.scrollTo(0, 0); // Sayfa başına git
                 }
             });
         }
@@ -480,22 +483,29 @@
         }
         
         /**
-         * Sidebar ve mobil menüdeki kategori listelerini doldurur
+         * Sidebar, mobil menü ve footer'daki kategori listelerini doldurur
          */
         function populateCategoryLists() {
             sidebarCategoryList.innerHTML = '';
             mobileCategoryList.innerHTML = '';
+            footerCategoryList.innerHTML = '';
             
             categories.forEach(category => {
                 // URL'de güvenli kullanım için encode et
                 const categoryHash = encodeURIComponent(category);
-                const li = document.createElement('li');
-                // href'i sadece kategoriyi içerecek şekilde ayarla
                 const href = category === 'Tümü' ? '#/' : `#category/${categoryHash}`;
-                li.innerHTML = `<a href="${href}" class="category-link block px-3 py-2 rounded-md transition-colors duration-150 hover:bg-blue-50" data-category="${category}">${category}</a>`;
                 
-                sidebarCategoryList.appendChild(li.cloneNode(true));
-                mobileCategoryList.appendChild(li);
+                // Sidebar ve Mobil Linkleri
+                const mainLi = document.createElement('li');
+                mainLi.innerHTML = `<a href="${href}" class="category-link block px-3 py-2 rounded-md transition-colors duration-150 hover:bg-blue-50" data-category="${category}">${category}</a>`;
+                
+                // Footer Linkleri
+                const footerLi = document.createElement('li');
+                footerLi.innerHTML = `<a href="${href}" class="category-link hover:text-white hover:underline" data-category="${category}">${category}</a>`;
+
+                sidebarCategoryList.appendChild(mainLi.cloneNode(true));
+                mobileCategoryList.appendChild(mainLi);
+                footerCategoryList.appendChild(footerLi);
             });
         }
         
@@ -532,14 +542,16 @@
                 renderHomePage(); // Sonra ana sayfayı render et
             } else {
                 // Ana sayfa (#, #/, veya boş hash)
-                // Kategori zaten "Tümü" ise tekrar filtreleme yapmaya gerek yok
-                if (currentCategory !== 'Tümü') {
-                    handleCategoryFilter('Tümü');
-                }
+                handleCategoryFilter('Tümü');
                 renderHomePage();
                 // URL'yi temizle (eğer #/ gibiyse)
-                if (hash !== '') {
-                    window.location.hash = '';
+                if (hash !== '#/') {
+                     // Arama yapıldıysa veya hash boşsa, #/'ye yönlendir
+                     // Bu, kategori "Tümü" seçiliyken sayfa yenilendiğinde
+                     // adres çubuğunun temiz kalmasını sağlar.
+                    if(hash.length > 1) { // Eğer #category/ veya #product/ değilse
+                        history.pushState("", document.title, window.location.pathname + window.location.search);
+                    }
                 }
             }
         }
@@ -600,17 +612,30 @@
                 return;
             }
             
+            // GÜNCELLEME: `detay_gorseller` dizisinden ilk resmi veya ana resmi al
+            const anaGorsel = (product.detay_gorseller && product.detay_gorseller.length > 0) 
+                                ? product.detay_gorseller[0] 
+                                : product.resim_linki;
+
             productDetailContent.innerHTML = `
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                    <!-- Ürün Resmi -->
-                    <div class="bg-white rounded-lg p-4 border border-gray-200 lg:sticky lg:top-28">
-                        <img src="${product.resim_linki}" alt="${product.aciklama}" class="w-full h-auto max-h-[500px] object-contain rounded-md" 
-                             onerror="this.onerror=null; this.src='https://placehold.co/600x600/f1f5f9/94a3b8?text=Resim+Yok';">
+                    
+                    <!-- GÜNCELLEME: Ürün Galerisi -->
+                    <div class="lg:sticky lg:top-28">
+                        <!-- Ana Resim -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-200 mb-4">
+                            <img id="main-product-image" src="${anaGorsel}" 
+                                 alt="${product.aciklama}" class="w-full h-auto max-h-[450px] object-contain rounded-md transition-all duration-300" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/600x600/f1f5f9/94a3b8?text=Resim+Yok';">
+                        </div>
+                        <!-- Küçük Resimler Galerisi -->
+                        <div id="thumbnail-gallery" class="flex space-x-2 overflow-x-auto p-2 no-scrollbar">
+                            <!-- Küçük resimler buraya JS ile eklenecek -->
+                        </div>
                     </div>
                     
                     <!-- Ürün Bilgileri -->
                     <div>
-                        <!-- DÜZELTME: Mobil için yazı boyutu küçültüldü -->
                         <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">${product.aciklama}</h1>
                         
                         <div class="mb-6">
@@ -620,7 +645,6 @@
                             }
                         </div>
                         
-                        <!-- DÜZELTME: Mobil için yazı boyutu küçültüldü -->
                         <p class="text-3xl md:text-4xl font-extrabold text-blue-600 mb-8">${formatPrice(product.fiyat)} TL</p>
                         
                         <button class="add-to-cart-btn w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg text-lg transition-colors duration-200 flex items-center justify-center space-x-2" data-id="${product.id}">
@@ -630,14 +654,50 @@
                             <span>Sepete Ekle</span>
                         </button>
                         
+                        <!-- GÜNCELLEME: Açıklama kısmı temizlendi -->
                         <div class="mt-8 border-t pt-6 text-gray-700 space-y-4">
                             <h4 class="text-lg font-semibold">Açıklama</h4>
-                            <p class="text-gray-600 leading-relaxed">${product.aciklama} - Bu alana ürüne ait daha detaylı açıklamalar, teknik özellikler ve benzeri bilgiler eklenebilir. Şimdilik ana açıklamayı tekrar gösteriyoruz. Ürünün orijinal linki: <a href="${product.urun_linki}" target="_blank" class="text-blue-500 hover:underline">Kaynağa Git</a></p>
+                            <p class="text-gray-600 leading-relaxed">${product.aciklama}</p>
                         </div>
                     </div>
                 </div>
             `;
             
+            // --- GALERİ YÖNETİMİ ---
+            const mainImage = productDetailContent.querySelector('#main-product-image');
+            const thumbnailGallery = productDetailContent.querySelector('#thumbnail-gallery');
+            
+            // Kullanılacak görselleri belirle
+            const gorseller = (product.detay_gorseller && product.detay_gorseller.length > 0) 
+                                ? product.detay_gorseller 
+                                : [product.resim_linki]; // Tek resim varsa bile dizi yap
+            
+            // Sadece 1'den fazla resim varsa küçük resim galerisini oluştur
+            if (gorseller.length > 1) {
+                thumbnailGallery.innerHTML = gorseller.map((gorsel, index) => `
+                    <button class="thumbnail-btn flex-shrink-0 w-20 h-20 rounded-md border-2 p-1 transition-all ${index === 0 ? 'border-blue-500' : 'border-gray-200 hover:border-gray-400'}" data-src="${gorsel}">
+                        <img src="${gorsel}" alt="Küçük resim ${index + 1}" class="w-full h-full object-contain rounded-sm" 
+                             onerror="this.onerror=null; this.src='https://placehold.co/80x80/f1f5f9/94a3b8?text=...';">
+                    </button>
+                `).join('');
+    
+                // Küçük resimlere tıklama olayı
+                thumbnailGallery.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.thumbnail-btn');
+                    if (!btn) return;
+                    
+                    const newSrc = btn.dataset.src;
+                    mainImage.src = newSrc;
+                    
+                    // Aktif border'ı ayarla
+                    thumbnailGallery.querySelectorAll('.thumbnail-btn').forEach(b => b.classList.remove('border-blue-500'));
+                    btn.classList.add('border-blue-500');
+                });
+            } else {
+                 thumbnailGallery.style.display = 'none'; // Tek resim varsa galeriyi gizle
+            }
+            // --- GALERİ YÖNETİMİ BİTİŞİ ---
+
             // Sepete ekle butonuna olay dinleyici ekle
             productDetailContent.querySelector('.add-to-cart-btn').addEventListener('click', (e) => {
                 addToCart(e.currentTarget.dataset.id);
@@ -811,7 +871,6 @@
             const maxButtons = 7; // Gösterilecek maks sayfa/ellipsis butonu
             let pagesToShow = [];
 
-            // Basitleştirilmiş sayfalama (Tüm ürünler 1 sayfada listeleniyorsa bu kısım çalışmaz)
             if (totalPages <= maxButtons) {
                 for (let i = 1; i <= totalPages; i++) {
                     pagesToShow.push(i);
@@ -821,7 +880,6 @@
                 let endPages = [totalPages];
                 let middlePages = [];
                 
-                // Aktif sayfanın etrafındaki 1 sayfayı (aktif sayfa dahil) hesapla
                 for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
                     middlePages.push(i);
                 }
@@ -831,7 +889,6 @@
                     .filter((value, index, self) => self.indexOf(value) === index) 
                     .sort((a, b) => a - b); 
 
-                // '...' (ellipsis) ekle
                 let prevPage = 0;
                 for (const page of allPages) {
                     if (prevPage + 1 < page) {
@@ -842,7 +899,6 @@
                 }
             }
             // --- Bitiş: Yeni Sayfalama Mantığı ---
-
 
             // Önceki Butonu
             paginationControls.appendChild(
@@ -868,11 +924,6 @@
         
         /**
          * Tek bir sayfalama butonu oluşturur
-         * @param {string} text Buton metni
-         * @param {number | null} pageNumber Gidilecek sayfa (null ise disabled)
-         * @param {boolean} [isActive=false] Aktif sayfa mı?
-         * @param {boolean} [isNav=false] Önceki/Sonraki butonu mu?
-         * @returns {HTMLElement} Oluşturulan buton elementi
          */
         function createPaginationButton(text, pageNumber, isActive = false, isNav = false) {
             const button = document.createElement('button');
@@ -898,7 +949,6 @@
 
         /**
          * Sayfalama için '...' (ellipsis) elementi oluşturur
-         * @returns {HTMLElement}
          */
         function createPaginationEllipsis() {
             const span = document.createElement('span');
@@ -934,12 +984,12 @@
             updateActiveCategoryStyles();
             
             // Arama yapınca URL hash'ini temizle
+            // DÜZELTME: pushState kullanarak adres çubuğunu temizle
             if(window.location.hash) {
-                window.location.hash = '';
-            } else {
-                // Zaten ana sayfadaysa, sadece render et
-                renderHomePage();
+                 history.pushState("", document.title, window.location.pathname + window.location.search);
             }
+            renderHomePage();
+
         }
 
         /**
@@ -954,14 +1004,9 @@
             } else {
                 const categoryTerm = category.toLowerCase();
                 
-                // KATEGORİ FİLTRESİ: Ürün açıklamasının sonundaki parantez içindeki kategoriye bakar.
+                // GÜNCELLEME: Sadece atanmış 'categoryKeyword' alanına göre filtrele
                 filteredProducts = allProducts.filter(product => {
-                    // 1. Ürünün categoryKeyword alanı varsa ve eşleşiyorsa
-                    if (product.categoryKeyword && product.categoryKeyword.toLowerCase() === categoryTerm) {
-                        return true;
-                    }
-                    // 2. Eğer categoryKeyword yoksa (veya eşleşmiyorsa), yedek olarak açıklama içinde arama yapar
-                    return product.aciklama.toLowerCase().includes(categoryTerm);
+                    return product.categoryKeyword && product.categoryKeyword.toLowerCase() === categoryTerm;
                 });
             }
             
@@ -974,6 +1019,58 @@
             
             // Mobil menüyü kapat
             toggleMobileNav(false);
+        }
+        
+        /**
+         * GÜNCELLEME: Ürün açıklamasına göre kategoriyi akıllıca tahmin eder
+         * @param {string} aciklama Ürün açıklaması
+         * @returns {string} Tahmin edilen kategori (veya "Diğer")
+         */
+        function detectCategory(aciklama) {
+            const lowerAciklama = aciklama.toLowerCase();
+            
+            // Anahtar kelimeler (daha spesifik olanlar önce gelmeli)
+            if (lowerAciklama.includes('ekran kartı') || lowerAciklama.includes('rtx') || lowerAciklama.includes('gtx') || lowerAciklama.includes('radeon rx') || lowerAciklama.includes('arc a')) {
+                return "Ekran Kartı";
+            }
+            if (lowerAciklama.includes('işlemci') || lowerAciklama.includes('ryzen') || lowerAciklama.includes('core i') || lowerAciklama.includes('soket')) {
+                return "İşlemci";
+            }
+            if (lowerAciklama.includes('anakart') || lowerAciklama.includes('motherboard') || /\b(b\d{3}m?|x\d{3}|z\d{3}|a\d{3})\b/i.test(aciklama)) { // örn: B550M, X670, Z790, A620
+                return "Anakart";
+            }
+            if (lowerAciklama.includes('ram') || lowerAciklama.includes('bellek') || /\d+gb\s*ddr\d/i.test(aciklama)) { // örn: 16GB DDR5
+                return "RAM";
+            }
+            if (lowerAciklama.includes('monitör') || lowerAciklama.includes('monitor') || /\d{2,}\s*inç|\d{2,}"/i.test(aciklama)) { // örn: 27 inç, 27"
+                return "Monitör";
+            }
+             // Güç Kaynağı (PSU) - Kasa'dan önce kontrol edilmeli
+            if (lowerAciklama.includes('psu') || lowerAciklama.includes('güç kaynağı') || (/\d{3,}w/i.test(aciklama) && (lowerAciklama.includes('80+') || lowerAciklama.includes('pfc') || lowerAciklama.includes('power supply')))) {
+                return "Güç Kaynağı";
+            }
+            if (lowerAciklama.includes('kasa') || lowerAciklama.includes('case') || lowerAciklama.includes('atx kasa')) {
+                return "Kasa";
+            }
+            if (lowerAciklama.includes('ssd') || lowerAciklama.includes('m.2 ssd') || lowerAciklama.includes('sata ssd') || lowerAciklama.includes('nvme')) {
+                return "SSD";
+            }
+            if (lowerAciklama.includes('soğutma') || lowerAciklama.includes('soğutucu') || lowerAciklama.includes('cooler') || lowerAciklama.includes('fan') || lowerAciklama.includes('sıvı soğutma')) {
+                return "Soğutma";
+            }
+            
+            // Eski (parantez içi) mantığı yedek olarak tut
+            const match = aciklama.match(/\(([^)]+)\)$/);
+            if (match) {
+                const potentialCategory = match[1].trim();
+                // 'categories' dizisindeki ('Tümü' hariç) bir kategoriyle eşleşiyor mu?
+                if (categories.slice(1).find(c => c.toLowerCase() === potentialCategory.toLowerCase())) {
+                    // Eşleşen kategorinin doğru yazımını döndür
+                    return categories.find(c => c.toLowerCase() === potentialCategory.toLowerCase());
+                }
+            }
+    
+            return "Diğer"; // Eşleşme bulunamazsa
         }
 
         // --- SEPET İŞLEVLERİ ---
